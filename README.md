@@ -28,21 +28,22 @@ via `PROXY_NETWORK`) and publishes no ports, so your proxy is the only way in.
 - **Fold-out menu** — one hamburger in the header (same on mobile and desktop) opens a
   slide-out panel with the live status counts (total / online / errors), a **dark / light /
   system theme selector**, the running release name and date, and the admin entry point.
-- **Admin panel** (`/admin`) — password-protected; configure site title, description, URL,
-  footer, accent colour, upload a custom **site icon + favicon** (auto-resized to 64×64 / 32×32
-  PNGs) and an **uploadable wallpaper** with its anchor, size, background colour and
-  transparency, and manage services (add / edit / delete / enable / reorder, plus
-  **per-service icon upload** with auto-resize for the homepage cards and an optional
-  **GitHub repo link** shown on each card).
+  Under the app name and last-updated date sit the links to the home page, **Credits**, and
+  **Feedback** (when the form is enabled).
+- **Admin panel** (`/admin`) — a password-protected home for everything below.
+- **Services** — add, edit, delete and enable/disable entries; reorder by dragging; upload a
+  per-service **icon** (auto-resized) and optionally **capture or upload a thumbnail**; add a
+  **GitHub repo link**; and fill in the detail-popup fields (tech stack, AI notes, story,
+  audience badge) shown when a card is expanded.
+- **Site & appearance** — site title, description, URL and footer; one **accent colour** for
+  the whole site; a custom **site icon + favicon** (auto-resized to 64×64 / 32×32 PNGs); and an
+  **uploadable wallpaper** with its anchor, size, background colour and transparency.
 - **Editable page copy** — the feedback and credits prose, and the credits-page lines, are
   data edited in the panel's **Page text** block, not markup in a template.
 - **Feedback form** (`/feedback`) — emails you and stores nothing. Behind a signed timing
   token, a honeypot and a rate limit; off by default.
-- **Backup & restore** — download everything you have configured (services with their artwork,
-  the site icon, the wallpaper, site settings, page copy, credit lines, email settings) as one
-  gzipped JSON file, and restore from one by choosing which resource categories to overwrite.
-  The SMTP password is never in a backup, and a snapshot of the current state is saved before
-  every restore so it can be undone.
+- **Backup & restore** — everything you have configured in one gzipped JSON file, restorable
+  by category. See [Backup & restore](#backup--restore).
 - **Automatic health checks** — periodically probes each enabled service URL and records
   status + latency.
 - **Secure by default** — Helmet security headers, CSP, httpOnly `SameSite=Strict` session
@@ -143,6 +144,25 @@ All configuration is via environment variables (see `.env.example` for the annot
 | `FEEDBACK_RATE_LIMIT` | `5` | Feedback submissions allowed per IP per window |
 | `NODE_ENV` | — | `production` enables secure cookies, gates HSTS, and rejects placeholder passwords |
 
+## Backup & restore
+
+*Download backup* writes everything this deployment has configured into a single gzipped JSON
+file: the site settings, the services (with their uploaded icons and thumbnails, which live in
+the database as base64), the page copy, the credit lines, and the email settings. *Restore from
+a backup* is a two-step dialog — confirm, pick a file, then choose which categories to overwrite.
+
+- **Seven categories:** site settings, page copy, site icon & favicon, wallpaper, email &
+  feedback, services, and credit lines. Restore **replaces** the selected categories rather than
+  merging, and applies them in one transaction.
+- **Nothing secret travels.** The SMTP password is never in an archive, and neither are the
+  sessions table or the one-time seed markers.
+- **Validated before anything is written.** The upload is decompressed, parsed and fully checked
+  first; a file that could not be restored is refused while nothing has been staged.
+- **Undoable.** A snapshot of the current state is written before every restore and listed in
+  the panel, so a regretted restore is reversible through the same dialog.
+
+Design rationale in [`docs/decisions.md` D25](docs/decisions.md).
+
 ## API
 
 ### Public (no auth)
@@ -195,6 +215,30 @@ npm test
 
 Runs integration tests against an in-memory database covering auth, CRUD, validation, and
 settings.
+
+## Agentic development
+
+This app was built with [OpenCode](https://opencode.ai) running **DeepSeek V4.1 Flash** — the
+agent wrote the code, the tests and these docs, and checked its own work against a live dev
+server and the test suite.
+
+The repository is deliberately set up so another agent (or you) can pick it up and change it
+without hand-holding:
+
+- **[`AGENTS.md`](AGENTS.md)** is the entry point. It carries the architecture map, the
+  conventions, and the traps that actually bit this codebase — the CSP rules, the drawer's
+  `transform`/`inert` requirement, bumping `ASSET_VERSION`, and the seed-once migration
+  semantics. Point an agent at it and it can debug, extend or rework the framework on its own.
+- **[`docs/decisions.md`](docs/decisions.md)** records every architectural decision as a
+  numbered entry — the *why*, and what was rejected — so settled ground is not re-litigated.
+- **The test suite** (`npm test`) is the guardrail: an agent can prove a change end to end
+  before claiming it works, and CI runs the same suite (plus a dependency audit) on every push
+  and pull request.
+- **[`SECURITY.md`](SECURITY.md)** states the threat model and the accepted risks, so an agent
+  touching auth, the health checker or the backup path knows the boundaries it must not cross.
+
+In practice: fork it, open it in OpenCode, and ask for a new feature, a different design system,
+or an integration — the instructions, the rationale and the checks are already in the repo.
 
 ## Security notes
 
