@@ -1,5 +1,12 @@
 # vibefolio
 
+[![CI](https://github.com/niels-emmer/vibefolio/actions/workflows/ci.yml/badge.svg)](https://github.com/niels-emmer/vibefolio/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+<p align="center">
+  <img src="docs/screenshot-dark.png" alt="vibefolio — the demo services page, dark theme" width="720">
+</p>
+
 A lightweight, self-hosted showcase of the public services on **your site** — a
 generalised, re-brandable version of the [macjuu.com](https://macjuu.com) services page.
 Each service is displayed as a card with an icon, description, URL, and a **live status
