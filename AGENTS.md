@@ -36,8 +36,9 @@ set -a; source .env; set +a; npm run dev
 
 The engineering discipline this project is developed under, kept **in the repository** rather
 than only in a tool's global config, so any agent (Claude Code, Cursor, Codex, OpenCode…) and
-any human works to the same standard. The governance half lives in
-[Secrets & governance](#secrets--governance).
+any human works to the same standard. The method — how work is planned, delegated, verified and
+reviewed — is described in [`docs/AGENT-WORKFLOW.md`](docs/AGENT-WORKFLOW.md). The governance
+half lives in [Secrets & governance](#secrets--governance).
 
 ### Before you write code
 
