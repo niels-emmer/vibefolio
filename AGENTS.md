@@ -32,6 +32,54 @@ locally you must source `.env` first:
 set -a; source .env; set +a; npm run dev
 ```
 
+## Working rules
+
+The engineering discipline this project is developed under, kept **in the repository** rather
+than only in a tool's global config, so any agent (Claude Code, Cursor, Codex, OpenCode…) and
+any human works to the same standard. The governance half lives in
+[Secrets & governance](#secrets--governance).
+
+### Before you write code
+
+- **State assumptions; ask rather than guess.** If a request is ambiguous, name what is unclear
+  instead of guessing through it, and surface the trade-offs before proceeding.
+- **Simplest thing that works.** No features beyond what was asked, nothing speculative. If 200
+  lines could be 50, write the 50.
+- **Surgical changes.** Touch only what the request needs. Match the existing style even where
+  you would do it differently. No drive-by refactors or unrelated "improvements".
+- **Define "done" first.** Turn the task into something that can pass or fail (a test, a rendered
+  page, a command's output) before writing the code, then loop until it passes.
+
+### While debugging
+
+- **Read the whole error before acting**, and reproduce the problem before attempting a fix.
+- **Change one variable at a time**, and beware the confident wrong diagnosis: never write a fix
+  for a problem you have not confirmed.
+- **Reproduce before fixing.** For a bug, write a test that fails for the right reason, fix the
+  code, then run it. The bug is fixed when the test passes, not when it "feels" fixed.
+
+### Before you claim it works
+
+- **Run it.** "Looks correct" is not "runs correctly" — see
+  [What the tests do not prove](#what-the-tests-do-not-prove): a green suite has repeatedly
+  missed real breakage here. Start the dev server and do the action.
+- **Report uncertainty honestly.** "I'm not sure this library streams" is useful; "I think it
+  works" is not. Never dress a guess up as confidence.
+- **Watch for the failure modes of autonomous work** — confident wrong diagnosis, fixes that
+  only feel right, scope creep, silently guessing past confusion. Stop and flag rather than
+  pushing through.
+- **UI consistency.** After any UI change, re-check the rendered page: fonts, sizes, colours and
+  spacing must match sibling sections and the design system. Compare against existing patterns
+  instead of leaving "close enough".
+
+### Dependencies
+
+Treat every added package as permanent, unowned code maintained on someone else's schedule.
+Check the standard library first. A dependency that is genuinely needed must be OSI-licensed
+(MIT / Apache-2.0 / BSD / LGPL — not AGPL or unlicensed), actively maintained, CVE-free, pinned
+to a version, and from a trusted registry — and the reason must be written down. See the
+dependency gate in [Secrets & governance](#secrets--governance).
+
 ## Architecture map
 
 | Path | Role |
@@ -226,16 +274,18 @@ set -a; source .env; set +a; npm run dev
 
 ### The rules that apply to this repo
 
-This is a **private, internet-facing** site. It serves no customer data, has no multi-tenancy
-and no accounts beyond the single admin password — so the enterprise governance stack
-(data-classification tiers, model routing by sensitivity, environment isolation) mostly
+This is an **internet-facing** self-hosted app (the code repository itself is public; each
+deployment's database and credentials are not). It serves no customer data, has no
+multi-tenancy and no accounts beyond the single admin password — so the enterprise governance
+stack (data-classification tiers, model routing by sensitivity, environment isolation) mostly
 resolves to the same answer here. What does apply:
 
-- **Data classification: INTERNAL by default.** The database holds the owner's own service
-  list and admin configuration; it is not customer data and holds no PII. Treat its contents
-  as private anyway: the repo itself is private and so is the site. Nothing in a prompt, an
-  issue, or a commit message should contain the live `ADMIN_PASSWORD`, an SMTP credential, or
-  a session token — if you see one, stop and redact before continuing.
+- **Data classification: INTERNAL by default.** The database holds the deployer's own service
+  list and admin configuration; it is not customer data and holds no PII. Treat a deployment's
+  contents as private anyway: a running site's database and admin credentials are not public,
+  even though this repository is. Nothing in a prompt, an issue, or a commit message should
+  contain a live `ADMIN_PASSWORD`, an SMTP credential, or a session token — if you see one,
+  stop and redact before continuing.
 - **Secrets never in source, logs or archives.** SMTP credentials live in the `settings`
   table and are deliberately outside `SETTING_KEYS`, so they cannot reach `/api/site`; the
   password is additionally excluded from every backup. Keep it that way — a new setting that
@@ -244,11 +294,14 @@ resolves to the same answer here. What does apply:
 - **Dependency gate.** Five runtime dependencies (`express`, `helmet`, `cookie-parser`,
   `express-rate-limit`, `nodemailer`), all permissively licensed (MIT, and `nodemailer` under
   MIT-0), all pinned. Adding one needs a stated reason; the standard library or an existing
-  dependency wins. There is no `npm audit` in CI — run it by hand when touching
-  `package.json`.
+  dependency wins. CI runs `npm audit --omit=dev --audit-level=high` on every push and pull
+  request, and Dependabot keeps npm, Docker and Actions current.
 - **Human review for risk.** Changes to auth, the CSRF/origin check, the backup/restore
   transaction, the SSRF guard in `health.js`, or the container's hardening belong to a human
   before they are deployed, whatever the test suite says. The suite is not a substitute.
+- **Environment isolation.** Never mix personal and production/enterprise credentials, tokens
+  or accounts in one session. Check the local toolchain rather than assuming a command exists
+  (this project needs Node >= 22.5; on some machines `node` is not on the default `PATH`).
 - **Audit trail.** Architectural decisions go in `docs/decisions.md` as a numbered entry —
   the *why*, and what was rejected — because the diff already records the *what*. Sessions
   that change behaviour should leave one.

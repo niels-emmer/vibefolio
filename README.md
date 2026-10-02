@@ -226,9 +226,11 @@ The repository is deliberately set up so another agent (or you) can pick it up a
 without hand-holding:
 
 - **[`AGENTS.md`](AGENTS.md)** is the entry point. It carries the architecture map, the
-  conventions, and the traps that actually bit this codebase — the CSP rules, the drawer's
-  `transform`/`inert` requirement, bumping `ASSET_VERSION`, and the seed-once migration
-  semantics. Point an agent at it and it can debug, extend or rework the framework on its own.
+  conventions, the working rules and the governance, and the traps that actually bit this
+  codebase — the CSP rules, the drawer's `transform`/`inert` requirement, bumping
+  `ASSET_VERSION`, and the seed-once migration semantics. The rules are kept in the repo (not
+  only in a tool's global config) so any agent — Claude Code, Cursor, Codex, OpenCode — gets
+  them. Point an agent at it and it can debug, extend or rework the framework on its own.
 - **[`docs/decisions.md`](docs/decisions.md)** records every architectural decision as a
   numbered entry — the *why*, and what was rejected — so settled ground is not re-litigated.
 - **The test suite** (`npm test`) is the guardrail: an agent can prove a change end to end
