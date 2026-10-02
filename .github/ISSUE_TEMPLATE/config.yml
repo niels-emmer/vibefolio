@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security report
+    url: https://github.com/niels-emmer/vibefolio/security/advisories/new
+    about: Please report vulnerabilities privately, not as a public issue.
+  - name: Documentation
+    url: https://github.com/niels-emmer/vibefolio/tree/main/docs
+    about: Architecture, development, decisions, and deployment notes.
+  - name: Screenshot service
+    url: https://github.com/niels-emmer/vibefolio/tree/main/screenshot-service
+    about: The optional browserless/chrome container that captures service thumbnails.
