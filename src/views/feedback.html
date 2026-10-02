@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{THEME}}" data-accent="{{ACCENT}}">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="{{META_DESCRIPTION}}" />
+  <meta name="theme-color" content="{{THEME_COLOR}}" />
+  <title>{{TITLE}}</title>
+  {{FAVICON}}
+  <link rel="preload" href="/fonts/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/css/style.css?v={{ASSET_VERSION}}" />
+</head>
+<body>
+  {{BACKGROUND}}
+
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+    <symbol id="i-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 3 L20 8 V16 L12 21 L4 16 V8 Z"/><circle cx="12" cy="12" r="2.5"/>
+    </symbol>
+    <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 6 9 17l-5-5"/>
+    </symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>
+    </symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/>
+    </symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/>
+    </symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+    </symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/>
+    </symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/>
+    </symbol>
+  </svg>
+
+  <header class="site-header">
+    <div class="container inner">
+      {{BRAND}}
+      <div class="header-right">
+        <noscript><a class="btn ghost small" href="/admin">Admin</a></noscript>
+        {{MENU_TOGGLE}}
+      </div>
+    </div>
+  </header>
+
+{{DRAWER}}
+
+  <main>
+    <section class="hero container">
+      <h1>Feedback</h1>
+      {{FEEDBACK_SUBTITLE}}
+    </section>
+
+    <section class="container">
+      <div class="form-card">
+        {{FEEDBACK_INTRO}}
+
+        <form id="feedback-form" novalidate>
+          <div class="field">
+            <label for="fb-name">Name</label>
+            <input type="text" id="fb-name" name="name" maxlength="120" required autocomplete="name" />
+          </div>
+
+          <div class="field">
+            <label for="fb-email">Email</label>
+            <input type="email" id="fb-email" name="email" maxlength="254" required autocomplete="email" />
+            <small class="hint">Only used to reply to you.</small>
+          </div>
+
+          <div class="field">
+            <label for="fb-message">Message</label>
+            <textarea id="fb-message" name="message" rows="7" maxlength="4000" required></textarea>
+          </div>
+
+          <!-- Honeypot: hidden from people, irresistible to naive bots. Not `hidden`
+               or `display:none`, which many bots skip; positioned off-screen and
+               hidden from assistive tech instead. The plain `text` type matters too,
+               because autofill ignores unknown types and so a password manager will
+               not fill it. -->
+          <div class="hp-field" aria-hidden="true">
+            <label for="fb-website">Website</label>
+            <input type="text" id="fb-website" name="website" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <input type="hidden" name="token" value="{{FORM_TOKEN}}" />
+
+          <div class="form-actions">
+            <button type="submit" class="btn primary" id="fb-submit">Send feedback</button>
+            <p class="form-hint" id="fb-hint">One message per minute, please.</p>
+          </div>
+
+          <p class="form-status" id="fb-status" role="status" aria-live="polite" hidden></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+{{FOOTER}}
+
+  <script type="module" src="/js/chrome.js?v={{ASSET_VERSION}}"></script>
+  <script type="module" src="/js/feedback.js?v={{ASSET_VERSION}}"></script>
+</body>
+</html>

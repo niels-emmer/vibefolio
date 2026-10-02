@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{THEME}}" data-accent="{{ACCENT}}">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="{{THEME_COLOR}}" />
+  <title>Admin — vibefolio</title>
+  {{FAVICON}}
+  <link rel="preload" href="/fonts/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/css/style.css?v={{ASSET_VERSION}}" />
+</head>
+<body>
+  {{BACKGROUND}}
+
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+    <symbol id="i-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 3 L20 8 V16 L12 21 L4 16 V8 Z"/><circle cx="12" cy="12" r="2.5"/>
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 6 9 17l-5-5"/>
+    </symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>
+    </symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+    </symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+    </symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 5v14"/><path d="M5 12h14"/>
+    </symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/>
+    </symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>
+    </symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/>
+    </symbol>
+    <!-- Fold-out menu: hamburger, close, the three theme icons, admin shield. -->
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/>
+    </symbol>
+    <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+    </symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/>
+    </symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+    </symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/>
+    </symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/>
+    </symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+    </symbol>
+    <symbol id="i-type" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 7V5h16v2"/><path d="M12 5v14"/><path d="M9 19h6"/>
+    </symbol>
+    <!-- Drag handle for the credit-line list. Dots, so it reads as a grip rather than
+         a control, and it is the only part of the row that starts a drag. -->
+    <symbol id="i-grip" viewBox="0 0 24 24" fill="currentColor">
+      <circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/>
+      <circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/>
+      <circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/>
+    </symbol>
+    <!-- Backup & restore: download (arrow into a tray) and restore (arrow out of one). -->
+    <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 19h16"/>
+    </symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M4 19h16"/>
+    </symbol>
+    <symbol id="i-archive" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9"/><path d="M10 13h4"/>
+    </symbol>
+    <!-- In-field clear: a filled disc with the ✕ knocked out of it.
+         The knockout is a hole, not a stroke painted in a guessed colour — the input's
+         background is a translucent stack over an ambient photo, so no solid colour would
+         match it. `evenodd` does the work: the circle and the plus-shaped subpath below are
+         one path, so the plus (which crosses the circle once) cancels to transparent, and the
+         group's rotation turns that plus into the ✕. No mask and no cross-reference, so it
+         survives being instantiated by <use> in any browser. -->
+    <symbol id="i-clear" viewBox="0 0 24 24">
+      <g transform="rotate(45 12 12)">
+        <path fill="currentColor" fill-rule="evenodd"
+              d="M2 12a10 10 0 1 0 20 0a10 10 0 1 0-20 0Z M10.4 7H13.6V10.4H17V13.6H13.6V17H10.4V13.6H7V10.4H10.4Z"/>
+      </g>
+    </symbol>
+  </svg>
+
+  <header class="site-header">
+    <div class="container inner">
+      {{BRAND}}
+      <div class="header-right">
+        <noscript><a class="btn ghost small" href="/admin">Admin</a></noscript>
+        {{MENU_TOGGLE}}
+      </div>
+    </div>
+  </header>
+
+{{DRAWER}}
+
+  <main class="container admin-main">
+    <!-- Login -->
+    <section id="login" class="auth-wrap" hidden>
+      <div class="auth-card">
+        {{AUTH_LOGO}}
+        <h1>Sign in</h1>
+        <p class="sub">Enter your admin password to manage services.</p>
+        <form id="login-form">
+          <div class="field">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" autocomplete="current-password" required />
+          </div>
+          <button type="submit" class="btn primary">Sign in</button>
+          <p class="form-error" id="login-error" hidden></p>
+        </form>
+      </div>
+    </section>
+
+    <!-- Admin panel -->
+    <section id="panel" hidden>
+      <div class="admin-head">
+        <div>
+          <h1>Dashboard</h1>
+          <p>Configure your services and site metadata.</p>
+        </div>
+        <div class="actions">
+          <button id="refresh-status" class="btn"><svg><use href="#i-refresh"/></svg>Refresh</button>
+          <button id="logout" class="btn ghost"><svg><use href="#i-logout"/></svg>Log out</button>
+        </div>
+      </div>
+
+      <!-- Site settings -->
+      <section class="panel">
+        <h2><svg><use href="#i-settings"/></svg>Site settings</h2>
+        <form id="settings-form">
+          <div class="field-row">
+            <div class="field">
+              <label>Site title <span class="opt">(header)</span></label>
+              <input type="text" name="siteTitle" maxlength="120" />
+            </div>
+            <div class="field">
+              <label>Homepage title <span class="opt">(main page)</span></label>
+              <input type="text" name="homepageTitle" maxlength="120" />
+            </div>
+          </div>
+          <div class="field">
+            <label>Site description</label>
+            <textarea name="siteDescription" rows="2" maxlength="500"></textarea>
+          </div>
+          <div class="field">
+            <label>Site URL <span class="opt">(optional)</span></label>
+            <input type="url" name="siteUrl" placeholder="https://your-domain.example" />
+          </div>
+          <div class="field">
+            <label>Footer text</label>
+            <input type="text" name="siteFooter" maxlength="500" />
+          </div>
+          <label class="checkbox" style="margin-bottom:1.2rem">
+            <input type="checkbox" name="showStats" checked />
+            <span>Show the stats block (Services / Operational / Down) on the homepage</span>
+          </label>
+          <div class="field">
+            <label>Accent colour</label>
+            <div class="accent-options" role="radiogroup" aria-label="Accent colour">{{ACCENT_OPTIONS}}
+            </div>
+            <small class="hint">Used for buttons, headings, links and highlights across the site.</small>
+          </div>
+          <div class="field">
+            <label>Site icon &amp; favicon</label>
+            <div class="icon-uploader">
+              <img id="icon-preview" class="preview" src="/favicon.svg" alt="Current site icon" />
+              <div class="controls">
+                <input type="file" id="icon-file" accept="image/*" />
+                <div class="row">
+                  <button type="button" class="btn small ghost" id="icon-reset">Reset to default</button>
+                </div>
+                <small class="hint">Saves automatically as a 64×64 site icon and 32×32 favicon. PNG keeps transparency.</small>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Wallpaper</label>
+            <div class="wallpaper-uploader">
+              <img id="wallpaper-preview" class="preview wallpaper" alt="Current wallpaper"{{WALLPAPER_PREVIEW}} />
+              <div class="controls">
+                <div class="row">
+                  <input type="file" id="wallpaper-file" accept="image/*" />
+                </div>
+                <div class="row">
+                  <button type="button" class="btn small ghost" id="wallpaper-delete">Delete wallpaper</button>
+                </div>
+                <small class="hint" id="wallpaper-hint">
+                  The background image behind every page. Resized and re-encoded before upload, so a
+                  large photo is fine. Saves as soon as you pick a file.
+                </small>
+              </div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="wallpaper-anchor">Anchor</label>
+              <select id="wallpaper-anchor" name="wallpaperAnchor">{{WALLPAPER_ANCHOR_OPTIONS}}
+              </select>
+              <small class="hint">Which part of the image stays visible when it doesn't fit.</small>
+            </div>
+            <div class="field">
+              <label for="wallpaper-size">Size</label>
+              <select id="wallpaper-size" name="wallpaperSize">{{WALLPAPER_SIZE_OPTIONS}}
+              </select>
+              <small class="hint">How the image is scaled to the screen.</small>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="wallpaper-color">Background colour</label>
+              <div class="color-input">
+                <input type="color" id="wallpaper-color" name="backgroundColor" value="#08090d" />
+                <output id="wallpaper-color-value">None</output>
+                <button type="button" class="input-clear-btn" id="wallpaper-color-clear" aria-label="Clear background colour" title="Clear background colour" hidden><svg aria-hidden="true"><use href="#i-clear"/></svg></button>
+              </div>
+              <small class="hint">Shows where the wallpaper doesn't — through it, and in its place when there is none.</small>
+            </div>
+            <div class="field">
+              <label for="wallpaper-transparency">Wallpaper transparency</label>
+              <div class="range-row">
+                <input type="range" id="wallpaper-transparency" name="wallpaperTransparency" min="0" max="100" step="1" value="0" />
+                <output id="wallpaper-transparency-value">0%</output>
+              </div>
+              <small class="hint">Lets the background colour show through the wallpaper.</small>
+            </div>
+          </div>
+          <p class="hint panel-hint">The wallpaper and its placement are saved with the settings below.</p>
+          <button type="submit" class="btn primary"><svg><use href="#i-check"/></svg>Save settings</button>
+        </form>
+      </section>
+
+      <!-- Page text -->
+      <section class="panel" id="page-text-panel">
+        <h2><svg><use href="#i-type"/></svg>Page text</h2>
+        <p class="panel-sub">
+          The words on the <a href="/feedback" target="_blank" rel="noopener">feedback</a> and
+          <a href="/credits" target="_blank" rel="noopener">credits</a> pages. A hard return
+          starts a new paragraph.
+        </p>
+        <form id="page-text-form">
+          <h3 class="panel-group">Feedback page</h3>
+          <div class="field">
+            <label for="pt-feedback-subtitle">Subtitle</label>
+            <input type="text" id="pt-feedback-subtitle" name="feedbackSubtitle" maxlength="300" />
+          </div>
+          <div class="field">
+            <label for="pt-feedback-intro">Intro text</label>
+            <textarea id="pt-feedback-intro" name="feedbackIntro" rows="7" maxlength="4000"></textarea>
+          </div>
+
+          <h3 class="panel-group">Credits page</h3>
+          <div class="field">
+            <label for="pt-credits-subtitle">Subtitle</label>
+            <input type="text" id="pt-credits-subtitle" name="creditsSubtitle" maxlength="300" />
+          </div>
+          <div class="field">
+            <label for="pt-credits-note">Bottom line</label>
+            <textarea id="pt-credits-note" name="creditsNote" rows="3" maxlength="1000"></textarea>
+          </div>
+
+          <button type="submit" class="btn primary"><svg><use href="#i-check"/></svg>Save page text</button>
+        </form>
+
+        <h3 class="panel-group" style="margin-top:2rem">Credit lines</h3>
+        <p class="panel-sub">
+          Drag the handle to reorder; each line saves when you leave it. A line with no link
+          is shown as plain text.
+        </p>
+        <div class="table-wrap" id="credits-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th class="th-handle" aria-label="Reorder"></th>
+                <th>Description</th>
+                <th>Value</th>
+                <th>Link <span class="opt">(optional)</span></th>
+                <th style="text-align:right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="credits-body"></tbody>
+          </table>
+        </div>
+        <p id="credits-empty" class="empty-state" hidden style="border:none;padding:1.5rem">No credit lines yet. Click Add to create one.</p>
+        <button id="add-credit-btn" class="btn small" type="button"><svg><use href="#i-plus"/></svg>Add credit line</button>
+      </section>
+
+      <!-- Feedback / email -->
+      <section class="panel" id="email-panel">
+        <h2><svg><use href="#i-mail"/></svg>Feedback</h2>
+        <p class="panel-sub">
+          Email delivery for the <a href="/feedback" target="_blank" rel="noopener">feedback form</a>.
+          Feedback is emailed and never stored on the site.
+        </p>
+        <form id="email-form">
+          <label class="checkbox" style="margin-bottom:1.2rem">
+            <input type="checkbox" name="feedbackEnabled" />
+            <span>Enable the feedback form and its menu link</span>
+          </label>
+
+          <div class="field-row">
+            <div class="field">
+              <label>SMTP server</label>
+              <div class="input-clear">
+                <input type="text" name="smtpHost" maxlength="200" placeholder="smtp.example.com" autocomplete="off" />
+                <button type="button" class="input-clear-btn" data-clear-field="smtpHost" aria-label="Clear SMTP server" title="Clear SMTP server" hidden><svg aria-hidden="true"><use href="#i-clear"/></svg></button>
+              </div>
+            </div>
+            <div class="field">
+              <label>Port</label>
+              <input type="number" name="smtpPort" min="1" max="65535" step="1" placeholder="587" list="smtp-port-presets" />
+              <datalist id="smtp-port-presets">
+                <option value="465">implicit TLS</option>
+                <option value="587">STARTTLS (recommended)</option>
+                <option value="25">plain / STARTTLS</option>
+              </datalist>
+              <small class="hint">Protocol: <span id="smtp-protocol">—</span> — derived from the port</small>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label>Username <span class="opt">(optional)</span></label>
+              <input type="text" name="smtpUser" maxlength="200" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label>Password <span class="opt">(optional)</span></label>
+              <input type="password" name="smtpPassword" maxlength="200" autocomplete="new-password" />
+              <!-- No clear control here, deliberately. The input is empty by design — blank
+                   means "keep the stored one" — so a ✕ in it would always be visible and would
+                   mean something different from every other ✕ in this panel. And a
+                   password-less SMTP config needs no clearing: leave the field unset, and a
+                   stored password is never sent while the username is blank (src/mailer.js).
+                   `PUT /api/admin/email { smtpPassword: null }` remains the way to un-store
+                   one; see docs/DEVELOPMENT.md. -->
+              <small class="hint">
+                <span id="smtp-password-state">No password stored.</span>
+                Leave blank to keep the stored one.
+              </small>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label>From address</label>
+              <div class="input-clear">
+                <input type="email" name="smtpFrom" maxlength="254" placeholder="feedback@example.com" autocomplete="off" />
+                <button type="button" class="input-clear-btn" data-clear-field="smtpFrom" aria-label="Clear From address" title="Clear From address" hidden><svg aria-hidden="true"><use href="#i-clear"/></svg></button>
+              </div>
+              <small class="hint">Must be an address the server is allowed to send as.</small>
+            </div>
+            <div class="field">
+              <label>Send feedback to</label>
+              <div class="input-clear">
+                <input type="email" name="smtpTo" maxlength="254" placeholder="you@example.com" autocomplete="off" />
+                <button type="button" class="input-clear-btn" data-clear-field="smtpTo" aria-label="Clear Send feedback to" title="Clear Send feedback to" hidden><svg aria-hidden="true"><use href="#i-clear"/></svg></button>
+              </div>
+              <small class="hint">Defaults to the From address when blank.</small>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Test recipient <span class="opt">(optional)</span></label>
+            <input type="email" name="testRecipient" maxlength="254" placeholder="defaults to Send feedback to" autocomplete="off" />
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn primary"><svg><use href="#i-check"/></svg>Save</button>
+            <button type="button" class="btn" id="email-test-connection"><svg><use href="#i-refresh"/></svg>Test connection</button>
+            <button type="button" class="btn" id="email-test-send"><svg><use href="#i-mail"/></svg>Send test email</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Services -->
+      <section class="panel">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem">
+          <h2 style="margin:0">Services</h2>
+          <button id="add-service-btn" class="btn small"><svg><use href="#i-plus"/></svg>Add</button>
+        </div>
+        <p class="panel-sub" style="margin-bottom:1rem">
+          Drag the handle to set the order they appear in on the homepage; each move saves
+          straight away. A new service is added at the end.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th class="th-handle" aria-label="Reorder"></th>
+                <th>Name</th>
+                <th>URL</th>
+                <th>Status</th>
+                <th>Enabled</th>
+                <th style="text-align:right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="services-body"></tbody>
+          </table>
+        </div>
+        <p id="services-empty" class="empty-state" hidden style="border:none;padding:2rem">No services yet. Click Add to create one.</p>
+      </section>
+
+      <!-- Add / edit service -->
+      <section class="panel" id="service-panel" hidden>
+        <h2 id="service-form-title"><svg><use href="#i-plus"/></svg>Add service</h2>
+        <form id="service-form">
+          <input type="hidden" name="id" />
+          <div class="field-row">
+            <div class="field">
+              <label>Name</label>
+              <input type="text" name="name" maxlength="120" required />
+            </div>
+            <div class="field">
+              <label>URL</label>
+              <input type="url" name="url" maxlength="500" required />
+            </div>
+          </div>
+          <div class="field">
+            <label>Icon <span class="opt">(optional)</span></label>
+            <div class="icon-uploader">
+              <img id="svc-icon-preview" class="preview" src="/favicon.svg" alt="Service icon" />
+              <div class="controls">
+                <input type="file" id="svc-icon-file" accept="image/*" />
+                <div class="row">
+                  <button type="button" class="btn small ghost" id="svc-icon-remove" hidden>Remove</button>
+                </div>
+                <small class="hint">Saves immediately for existing services; for a new service it's saved when you create it. Resized to 64×64 for the homepage card.</small>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Thumbnail <span class="opt">(optional)</span></label>
+            <div class="icon-uploader">
+              <img id="svc-thumb-preview" class="preview thumb" src="/favicon.svg" alt="Service thumbnail" />
+              <div class="controls">
+                <div class="row">
+                  <button type="button" class="btn small" id="svc-thumb-capture">Capture from URL</button>
+                  <input type="file" id="svc-thumb-file" accept="image/*" />
+                </div>
+                <div class="row">
+                  <button type="button" class="btn small ghost" id="svc-thumb-remove" hidden>Remove</button>
+                </div>
+                <small class="hint">Captures a 640×360 screenshot of the service URL via the screenshot service, or upload your own (resized to 16:9). Saves immediately for existing services.</small>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label>GitHub repo <span class="opt">(optional)</span></label>
+            <input type="text" name="githubRepo" maxlength="500" placeholder="owner/repo or https://github.com/owner/repo" />
+          </div>
+          <div class="field">
+            <label>Description</label>
+            <textarea name="description" rows="2" maxlength="500"></textarea>
+          </div>
+          <div class="field">
+            <label>Tech stack <span class="opt">(optional — shown as chips in the detail popup)</span></label>
+            <input type="text" name="techStack" maxlength="500" placeholder="Next.js, TypeScript, SQLite" />
+            <small class="hint">Comma or pipe separated, up to 10 tags.</small>
+          </div>
+          <div class="field">
+            <label>AI functionality <span class="opt">(optional)</span></label>
+            <textarea name="aiDetails" rows="3" maxlength="1000"></textarea>
+            <small class="hint">Hard returns become separate paragraphs in the popup.</small>
+          </div>
+          <div class="field">
+            <label>The story <span class="opt">(optional — why it's useful or funny)</span></label>
+            <textarea name="story" rows="3" maxlength="1000"></textarea>
+            <small class="hint">Hard returns become separate paragraphs in the popup.</small>
+          </div>
+          <div class="field">
+            <label>Audience <span class="opt">(optional)</span></label>
+            <select name="audience">
+              <option value="">— None —</option>
+              <option value="personal">Personal</option>
+              <option value="shared">Worth sharing</option>
+              <option value="open-source">Open source</option>
+            </select>
+          </div>
+          <label class="checkbox" style="margin-bottom:1.2rem">
+            <input type="checkbox" name="enabled" checked />
+            <span>Service enabled</span>
+          </label>
+          <div style="display:flex;gap:0.6rem">
+            <button type="submit" class="btn primary" id="service-submit"><svg><use href="#i-check"/></svg>Add service</button>
+            <button type="button" class="btn ghost" id="service-cancel" hidden>Cancel</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Backup & restore -->
+      <section class="panel" id="backup-panel">
+        <h2><svg><use href="#i-archive"/></svg>Backup &amp; restore</h2>
+        <p class="panel-sub">
+          A backup holds everything you have configured here — the services with their uploaded
+          icons and thumbnails, the site settings, the page text, the credit lines and the email
+          settings — as one gzipped JSON file. The SMTP password is never included.
+        </p>
+        <div class="backup-actions">
+          <button type="button" class="btn" id="backup-download"><svg><use href="#i-download"/></svg>Download backup</button>
+          <button type="button" class="btn danger" id="restore-open"><svg><use href="#i-upload"/></svg>Restore from a backup…</button>
+        </div>
+
+        <div id="snapshots-wrap" class="snapshots-section" hidden>
+          <h3 class="panel-group">Pre-restore snapshots</h3>
+          <p class="panel-sub">
+            Written to the app's data directory just before every restore, so a restore can be
+            undone by restoring the snapshot. The five most recent are kept.
+          </p>
+          <ul class="snapshot-list" id="snapshot-list"></ul>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <!-- Restore wizard. A native <dialog> so focus trapping and Escape come from the
+       platform; `showModal()` puts it in the top layer, which is why it can sit here
+       without fighting the header's backdrop-filter. -->
+  <dialog id="restore-modal" class="modal" aria-labelledby="restore-title">
+    <div class="modal-head">
+      <h2 id="restore-title"><svg><use href="#i-upload"/></svg>Restore from a backup</h2>
+      <button type="button" class="modal-close" id="restore-close" aria-label="Close">
+        <svg aria-hidden="true"><use href="#i-close"/></svg>
+      </button>
+    </div>
+
+    <!-- Step 1: the warning, the confirmation and the file. -->
+    <div class="modal-body" id="restore-step-1">
+      <p class="modal-lead">
+        Restoring <strong>overwrites</strong>: for each category you select, the archive becomes
+        the truth, and anything it does not mention is removed.
+      </p>
+      <ul class="modal-warn">
+        <li>Services and credit lines in a selected category are <strong>replaced</strong>, not merged.</li>
+        <li>A backup never contains the SMTP password, so the stored one is left untouched.</li>
+        <li>A snapshot of the current state is saved on the server before anything changes.</li>
+      </ul>
+      <label class="checkbox modal-confirm">
+        <input type="checkbox" id="restore-confirm" />
+        <span>I understand that everything selected will be overwritten — and I have made a backup.</span>
+      </label>
+      <div class="modal-actions">
+        <button type="button" class="btn small" id="restore-download-first">
+          <svg><use href="#i-download"/></svg>Download a backup first
+        </button>
+      </div>
+      <div class="field">
+        <label for="restore-file">Backup file</label>
+        <input type="file" id="restore-file" accept=".gz,application/gzip,application/x-gzip" />
+        <small class="hint" id="restore-file-hint">Tick the box and choose a file to continue.</small>
+      </div>
+      <p class="form-error" id="restore-error" hidden></p>
+      <div class="modal-actions end">
+        <button type="button" class="btn ghost" id="restore-cancel">Cancel</button>
+        <button type="button" class="btn primary" id="restore-verify" disabled>Verify archive</button>
+      </div>
+    </div>
+
+    <!-- Step 2: the verified overview, and what to restore. -->
+    <div class="modal-body" id="restore-step-2" hidden>
+      <dl class="archive-meta" id="archive-meta"></dl>
+      <p class="panel-sub">Choose what to restore. Everything is selected by default.</p>
+      <div class="category-list" id="category-list"></div>
+      <p class="form-error" id="restore-error-2" hidden></p>
+      <div class="modal-actions end">
+        <button type="button" class="btn ghost" id="restore-back">Back</button>
+        <button type="button" class="btn danger" id="restore-apply">Restore selected</button>
+      </div>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast"><svg id="toast-icon"><use href="#i-check"/></svg><span id="toast-msg"></span></div>
+  <!-- `feedback.js` must load BEFORE `admin.js`. admin.js is a classic script, so it
+       executes during parsing and its checkAuth() can call showPanel() before a
+       deferred module has run — which used to leave the email panel blank and, worse,
+       let a Save write empty values over a working SMTP config. Loading the module
+       first lets both be deferred and still run in order. -->
+  <script type="module" src="/js/feedback.js?v={{ASSET_VERSION}}"></script>
+  <script type="module" src="/js/chrome.js?v={{ASSET_VERSION}}"></script>
+  <script type="module" src="/js/admin.js?v={{ASSET_VERSION}}"></script>
+</body>
+</html>

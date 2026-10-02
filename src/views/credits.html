@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{THEME}}" data-accent="{{ACCENT}}">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Credit where credit is due — the tools, people, and projects behind this site." />
+  <meta name="theme-color" content="{{THEME_COLOR}}" />
+  <title>Credits — vibefolio</title>
+  {{FAVICON}}
+  <link rel="preload" href="/fonts/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/css/style.css?v={{ASSET_VERSION}}" />
+</head>
+<body>
+  {{BACKGROUND}}
+
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+    <symbol id="i-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 3 L20 8 V16 L12 21 L4 16 V8 Z"/><circle cx="12" cy="12" r="2.5"/>
+    </symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M7 17 L17 7"/><path d="M8 7h9v9"/>
+    </symbol>
+    <!-- Fold-out menu: hamburger, close, the three theme icons, admin shield. -->
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/>
+    </symbol>
+    <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+    </symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/>
+    </symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+    </symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/>
+    </symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/>
+    </symbol>
+  </svg>
+
+  <header class="site-header">
+    <div class="container inner">
+      {{BRAND}}
+      <div class="header-right">
+        <noscript><a class="btn ghost small" href="/admin">Admin</a></noscript>
+        {{MENU_TOGGLE}}
+      </div>
+    </div>
+  </header>
+
+{{DRAWER}}
+
+  <main>
+    <section class="hero container">
+      <h1>Credits</h1>
+      {{CREDITS_SUBTITLE}}
+    </section>
+
+    <section class="container">
+      <div class="credits-list">{{CREDITS_LIST}}
+      </div>
+
+      {{CREDITS_NOTE}}
+    </section>
+  </main>
+
+{{FOOTER}}
+
+  <script type="module" src="/js/chrome.js?v={{ASSET_VERSION}}"></script>
+</body>
+</html>

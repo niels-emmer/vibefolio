@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Runtime data (SQLite database lives here)
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# Environment / secrets — .env.example is the only one that belongs in the repo.
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{THEME}}" data-accent="{{ACCENT}}">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="{{META_DESCRIPTION}}" />
+  <meta name="theme-color" content="{{THEME_COLOR}}" />
+  <meta property="og:title" content="{{OG_TITLE}}" />
+  <meta property="og:description" content="{{META_DESCRIPTION}}" />
+  <meta property="og:type" content="website" />
+  <title>{{TITLE}}</title>
+  {{FAVICON}}
+  <link rel="preload" href="/fonts/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/css/style.css?v={{ASSET_VERSION}}" />
+</head>
+<body>
+  {{BACKGROUND}}
+
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+    <symbol id="i-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 3 L20 8 V16 L12 21 L4 16 V8 Z"/><circle cx="12" cy="12" r="2.5"/>
+    </symbol>
+    <symbol id="i-activity" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 12h-4l-3 8L9 4l-3 8H2"/>
+    </symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M7 17 L17 7"/><path d="M8 7h9v9"/>
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 6 9 17l-5-5"/>
+    </symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>
+    </symbol>
+    <symbol id="i-github" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+    </symbol>
+    <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+    </symbol>
+    <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+    </symbol>
+    <!-- Fold-out menu: hamburger, the three theme icons, and the admin shield. -->
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/>
+    </symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/>
+    </symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+    </symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/>
+    </symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/>
+    </symbol>
+  </svg>
+
+  <header class="site-header">
+    <div class="container inner">
+      {{BRAND}}
+      <div class="header-right">
+        <!-- Without JS the drawer cannot open, so the header keeps a plain way
+             into the admin panel rather than becoming a dead end. -->
+        <noscript><a class="btn ghost small" href="/admin">Admin</a></noscript>
+        {{MENU_TOGGLE}}
+      </div>
+    </div>
+  </header>
+
+{{DRAWER}}
+
+  <main>
+    <section class="hero container">
+      <h1 id="site-title">{{SITE_TITLE}}</h1>
+      <p class="subtitle" id="site-description">{{SITE_DESCRIPTION}}</p>
+
+      {{STATS}}
+    </section>
+
+    <section class="container">
+      <div class="services-grid" id="services" data-ssr="1">{{CARDS}}</div>
+    </section>
+  </main>
+
+{{FOOTER}}
+
+  <!-- Service detail popup -->
+  <dialog id="detail-dialog" class="detail-dialog" aria-labelledby="detail-title">
+    <div class="detail-head">
+      <div class="detail-title-wrap">
+        <div class="icon-box" id="detail-icon"></div>
+        <div class="title-wrap">
+          <h3 id="detail-title"></h3>
+          <div class="host" id="detail-host"></div>
+        </div>
+      </div>
+      <button type="button" class="detail-close" id="detail-close" aria-label="Close details">
+        <svg><use href="#i-close"/></svg>
+      </button>
+    </div>
+    <div class="detail-meta">
+      <span class="status" id="detail-status"></span>
+      <span class="latency" id="detail-latency"></span>
+      <span class="audience-badge" id="detail-audience" hidden></span>
+    </div>
+    <div class="detail-body">
+      <img class="detail-thumb" id="detail-thumb" alt="" hidden />
+      <div class="detail-section" id="detail-tech" hidden>
+        <h4>Built with</h4>
+        <div class="chips" id="detail-tech-chips"></div>
+      </div>
+      <div class="detail-section" id="detail-ai" hidden>
+        <h4>AI inside</h4>
+        <p id="detail-ai-text"></p>
+      </div>
+      <div class="detail-section" id="detail-story" hidden>
+        <h4>The story</h4>
+        <p id="detail-story-text"></p>
+      </div>
+    </div>
+    <div class="detail-foot">
+      <a class="btn ghost small" id="detail-github" href="#" target="_blank" rel="noopener noreferrer" hidden>
+        <svg><use href="#i-github"/></svg>GitHub
+      </a>
+      <a class="btn primary small" id="detail-open" href="#" target="_blank" rel="noopener noreferrer">
+        Open<svg><use href="#i-arrow"/></svg>
+      </a>
+    </div>
+  </dialog>
+
+  <script type="module" src="/js/chrome.js?v={{ASSET_VERSION}}"></script>
+  <script type="module" src="/js/app.js?v={{ASSET_VERSION}}"></script>
+</body>
+</html>

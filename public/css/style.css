@@ -1,0 +1,2055 @@
+/* ============================================================================
+   vibefolio — "Midnight Glass" design system
+   Fully custom, no framework. Dark-first, glassmorphism, gradient accents.
+   ============================================================================ */
+
+/* --- Fonts (self-hosted variable, preloaded in HTML) --- */
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('/fonts/space-grotesk-latin.woff2') format('woff2-variations');
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter-latin.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('/fonts/jetbrains-mono-latin.woff2') format('woff2-variations');
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* --- Design tokens --- */
+:root {
+  /* Native widgets (scrollbars, form controls, autofill) follow the palette. */
+  color-scheme: dark;
+
+  --font-display: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --bg: #08090d;
+  --bg-2: #0d0f16;
+  --surface: rgba(12, 14, 20, 0.74);
+  --surface-2: rgba(20, 23, 32, 0.74);
+  --border: rgba(255, 255, 255, 0.09);
+  --border-strong: rgba(255, 255, 255, 0.16);
+
+  --text: #e8eaf1;
+  --text-soft: #c3c8d6;
+  --muted: #8b90a3;
+  --muted-2: #6a6f83;
+
+  /* --- The accent (see D21) -------------------------------------------------
+     One hue for the whole site, chosen in the admin panel and rendered into
+     `<html data-accent="…">` by the server, so the right palette is in the first
+     byte and no script is needed to apply it.
+
+     Every component reads these five tokens and nothing else. `--accent` is the
+     hue itself (display text, hovers, headings, links, focus rings);
+     `--accent-solid` is the same hue as a *button fill*, which is a different
+     problem from display text — the fill needs a text colour that clears AA in
+     both themes, hence `--on-accent`; and `--grad-accent` is the decorative pair
+     used for the stat numbers and the brand tile.
+
+     The values below are **amber**, the default: an unset or unrecognised accent
+     renders exactly what the site looked like before the picker existed. The
+     accent blocks further down re-point all five. */
+  --accent: #ffb800;
+  --accent-rgb: 255, 184, 0;
+  --accent-solid: #ffb800;
+  --on-accent: #1a1508;
+  --grad-accent: linear-gradient(120deg, #ffb800, #ffd75e);
+  /* A wash of the accent for tiles. Derived from --accent-rgb, so unlike the five
+     above it needs no value per accent. */
+  --accent-soft: linear-gradient(120deg, rgba(var(--accent-rgb), 0.18), rgba(var(--accent-rgb), 0.06));
+
+  --success: #34d399;
+  --danger: #f87171;
+  --warning: #fbbf24;
+
+  /* RGB triplets for every colour the components use with an alpha channel, so a
+     theme only has to restate the colour once instead of hunting rgba() literals. */
+  --success-rgb: 52, 211, 153;
+  --danger-rgb: 248, 113, 113;
+  --warning-rgb: 251, 191, 36;
+
+  /* Surfaces that are not derived from --surface and therefore need a light value. */
+  --header-bg: rgba(8, 9, 13, 0.78);
+  --footer-bg: rgba(8, 9, 13, 0.72);
+  --backdrop: rgba(5, 6, 9, 0.72);
+  --input-bg: rgba(0, 0, 0, 0.25);
+  --photo-overlay: linear-gradient(
+    180deg,
+    rgba(8, 9, 13, 0.88) 0%,
+    rgba(8, 9, 13, 0.5) 45%,
+    rgba(8, 9, 13, 0.85) 100%
+  );
+  --grad-ok: linear-gradient(120deg, #34d399, #6ee7b7);
+  --grad-down: linear-gradient(120deg, #f87171, #fca5a5);
+
+  /* The admin's background colour, and the wallpaper it fades. Both are *set* by the
+     markup (`{{BACKGROUND}}` in the views, and the panel's live preview), never here —
+     these declarations are what make the two properties exist at all, so a page with no
+     background colour and no wallpaper falls back cleanly instead of reading an
+     undefined value. Declaring `--wp-color` is not cosmetic: `test/theme.test.js` fails
+     on any property a rule reads but nothing declares. */
+  --wp-color: transparent;
+  --wp-image: none;
+  --wp-opacity: 1;
+
+  --radius: 18px;
+  --radius-sm: 12px;
+  --radius-lg: 24px;
+
+  --shadow-lg: 0 20px 60px -20px rgba(0, 0, 0, 0.7);
+  --shadow-md: 0 10px 30px -12px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 0 1px rgba(var(--accent-rgb), 0.35), 0 0 30px rgba(var(--accent-rgb), 0.25);
+
+  --container: 1160px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* --- Light theme -----------------------------------------------------------
+   Selected with `<html data-theme="…">`, which the server renders from the
+   visitor's cookie (see D15) so the right palette is in the first byte and no
+   script is needed to apply it — the credits page would otherwise flash.
+
+   The light tokens are declared TWICE: once for an explicit light choice, and
+   again inside the prefers-color-scheme query for `system`. CSS cannot share one
+   declaration block between a plain selector and a media query, so the
+   duplication is deliberate — `test/theme.test.js` fails if the two blocks drift
+   apart. */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #f4f5f9;
+  --bg-2: #ffffff;
+  --surface: rgba(255, 255, 255, 0.76);
+  --surface-2: rgba(255, 255, 255, 0.92);
+  --border: rgba(16, 18, 28, 0.1);
+  --border-strong: rgba(16, 18, 28, 0.2);
+
+  --text: #171a22;
+  --text-soft: #3d4353;
+  --muted: #5b6172;
+  --muted-2: #787e90;
+
+  --accent: #a15f00;
+  --accent-rgb: 161, 95, 0;
+  --accent-solid: #8a5200;
+  --on-accent: #ffffff;
+  --grad-accent: linear-gradient(120deg, #a15f00, #8a5200);
+
+  --success: #047857;
+  --danger: #dc2626;
+  --warning: #b45309;
+
+  --success-rgb: 4, 120, 87;
+  --danger-rgb: 220, 38, 38;
+  --warning-rgb: 180, 83, 9;
+
+  --header-bg: rgba(255, 255, 255, 0.82);
+  --footer-bg: rgba(255, 255, 255, 0.72);
+  --backdrop: rgba(20, 24, 40, 0.42);
+  --input-bg: rgba(16, 18, 28, 0.045);
+  --photo-overlay: linear-gradient(
+    180deg,
+    rgba(244, 245, 249, 0.94) 0%,
+    rgba(244, 245, 249, 0.74) 45%,
+    rgba(244, 245, 249, 0.92) 100%
+  );
+  --grad-ok: linear-gradient(120deg, #047857, #0f766e);
+  --grad-down: linear-gradient(120deg, #dc2626, #ef4444);
+
+  --shadow-lg: 0 20px 50px -22px rgba(20, 24, 40, 0.35);
+  --shadow-md: 0 10px 26px -14px rgba(20, 24, 40, 0.3);
+  --shadow-glow: 0 0 0 1px rgba(var(--accent-rgb), 0.35), 0 0 26px rgba(var(--accent-rgb), 0.16);
+}
+
+/* `system`: the same light palette, when the OS asks for it. Keep in sync with the
+   block above — `test/theme.test.js` asserts they are identical. */
+@media (prefers-color-scheme: light) {
+  :root[data-theme="system"] {
+    color-scheme: light;
+
+    --bg: #f4f5f9;
+    --bg-2: #ffffff;
+    --surface: rgba(255, 255, 255, 0.76);
+    --surface-2: rgba(255, 255, 255, 0.92);
+    --border: rgba(16, 18, 28, 0.1);
+    --border-strong: rgba(16, 18, 28, 0.2);
+
+    --text: #171a22;
+    --text-soft: #3d4353;
+    --muted: #5b6172;
+    --muted-2: #787e90;
+
+    --accent: #a15f00;
+    --accent-rgb: 161, 95, 0;
+    --accent-solid: #8a5200;
+    --on-accent: #ffffff;
+    --grad-accent: linear-gradient(120deg, #a15f00, #8a5200);
+
+    --success: #047857;
+    --danger: #dc2626;
+    --warning: #b45309;
+
+    --success-rgb: 4, 120, 87;
+    --danger-rgb: 220, 38, 38;
+    --warning-rgb: 180, 83, 9;
+
+    --header-bg: rgba(255, 255, 255, 0.82);
+    --footer-bg: rgba(255, 255, 255, 0.72);
+    --backdrop: rgba(20, 24, 40, 0.42);
+    --input-bg: rgba(16, 18, 28, 0.045);
+    --photo-overlay: linear-gradient(
+      180deg,
+      rgba(244, 245, 249, 0.94) 0%,
+      rgba(244, 245, 249, 0.74) 45%,
+      rgba(244, 245, 249, 0.92) 100%
+    );
+    --grad-ok: linear-gradient(120deg, #047857, #0f766e);
+    --grad-down: linear-gradient(120deg, #dc2626, #ef4444);
+
+    --shadow-lg: 0 20px 50px -22px rgba(20, 24, 40, 0.35);
+    --shadow-md: 0 10px 26px -14px rgba(20, 24, 40, 0.3);
+    --shadow-glow: 0 0 0 1px rgba(var(--accent-rgb), 0.35), 0 0 26px rgba(var(--accent-rgb), 0.16);
+  }
+}
+
+/* --- Accent palettes --------------------------------------------------------
+   The site's highlight hue, chosen in the admin panel and rendered into
+   `<html data-accent="…">` server-side (D21). `amber` — the default — is already
+   spelled out in `:root` above and is repeated here so the picker's amber chip is
+   painted from the same place as every other one.
+
+   Each accent re-points the same five tokens, and each needs a dark and a light
+   set: a hue bright enough to read as display text on near-black is unreadable on
+   the light background, so the light palette darkens it instead and pairs it with
+   white button text. The light values are declared twice for the same reason the
+   light palette itself is (CSS cannot share a declaration block between a plain
+   selector and a media query) and `test/theme.test.js` fails if the copies drift.
+
+   The selectors also match *descendants*, not just `:root`: the admin picker's
+   chips carry `data-accent="…"` so each one is painted with the accent it offers
+   rather than the one currently in force. */
+[data-accent="amber"] {
+  --accent: #ffb800;
+  --accent-rgb: 255, 184, 0;
+  --accent-solid: #ffb800;
+  --on-accent: #1a1508;
+  --grad-accent: linear-gradient(120deg, #ffb800, #ffd75e);
+}
+[data-accent="violet"] {
+  --accent: #a78bfa;
+  --accent-rgb: 167, 139, 250;
+  --accent-solid: #8b5cf6;
+  --on-accent: #100520;
+  --grad-accent: linear-gradient(120deg, #a78bfa, #c4b5fd);
+}
+[data-accent="cyan"] {
+  --accent: #22d3ee;
+  --accent-rgb: 34, 211, 238;
+  --accent-solid: #06b6d4;
+  --on-accent: #04222a;
+  --grad-accent: linear-gradient(120deg, #22d3ee, #67e8f9);
+}
+[data-accent="emerald"] {
+  --accent: #34d399;
+  --accent-rgb: 52, 211, 153;
+  --accent-solid: #10b981;
+  --on-accent: #04231a;
+  --grad-accent: linear-gradient(120deg, #34d399, #6ee7b7);
+}
+[data-accent="rose"] {
+  --accent: #f472b6;
+  --accent-rgb: 244, 114, 182;
+  --accent-solid: #ec4899;
+  --on-accent: #2a0718;
+  --grad-accent: linear-gradient(120deg, #f472b6, #f9a8d4);
+}
+
+:root[data-theme="light"][data-accent="amber"],
+:root[data-theme="light"] [data-accent="amber"] {
+  --accent: #a15f00;
+  --accent-rgb: 161, 95, 0;
+  --accent-solid: #8a5200;
+  --on-accent: #ffffff;
+  --grad-accent: linear-gradient(120deg, #a15f00, #8a5200);
+}
+:root[data-theme="light"][data-accent="violet"],
+:root[data-theme="light"] [data-accent="violet"] {
+  --accent: #6d28d9;
+  --accent-rgb: 109, 40, 217;
+  --accent-solid: #5b21b6;
+  --on-accent: #ffffff;
+  --grad-accent: linear-gradient(120deg, #6d28d9, #5b21b6);
+}
+:root[data-theme="light"][data-accent="cyan"],
+:root[data-theme="light"] [data-accent="cyan"] {
+  --accent: #0e7490;
+  --accent-rgb: 14, 116, 144;
+  --accent-solid: #155e75;
+  --on-accent: #ffffff;
+  --grad-accent: linear-gradient(120deg, #0e7490, #155e75);
+}
+:root[data-theme="light"][data-accent="emerald"],
+:root[data-theme="light"] [data-accent="emerald"] {
+  --accent: #047857;
+  --accent-rgb: 4, 120, 87;
+  --accent-solid: #065f46;
+  --on-accent: #ffffff;
+  --grad-accent: linear-gradient(120deg, #047857, #065f46);
+}
+:root[data-theme="light"][data-accent="rose"],
+:root[data-theme="light"] [data-accent="rose"] {
+  --accent: #be185d;
+  --accent-rgb: 190, 24, 93;
+  --accent-solid: #9d174d;
+  --on-accent: #ffffff;
+  --grad-accent: linear-gradient(120deg, #be185d, #9d174d);
+}
+
+/* `system` + a light OS preference: the same values again, as above. */
+@media (prefers-color-scheme: light) {
+  :root[data-theme="system"][data-accent="amber"],
+  :root[data-theme="system"] [data-accent="amber"] {
+    --accent: #a15f00;
+    --accent-rgb: 161, 95, 0;
+    --accent-solid: #8a5200;
+    --on-accent: #ffffff;
+    --grad-accent: linear-gradient(120deg, #a15f00, #8a5200);
+  }
+  :root[data-theme="system"][data-accent="violet"],
+  :root[data-theme="system"] [data-accent="violet"] {
+    --accent: #6d28d9;
+    --accent-rgb: 109, 40, 217;
+    --accent-solid: #5b21b6;
+    --on-accent: #ffffff;
+    --grad-accent: linear-gradient(120deg, #6d28d9, #5b21b6);
+  }
+  :root[data-theme="system"][data-accent="cyan"],
+  :root[data-theme="system"] [data-accent="cyan"] {
+    --accent: #0e7490;
+    --accent-rgb: 14, 116, 144;
+    --accent-solid: #155e75;
+    --on-accent: #ffffff;
+    --grad-accent: linear-gradient(120deg, #0e7490, #155e75);
+  }
+  :root[data-theme="system"][data-accent="emerald"],
+  :root[data-theme="system"] [data-accent="emerald"] {
+    --accent: #047857;
+    --accent-rgb: 4, 120, 87;
+    --accent-solid: #065f46;
+    --on-accent: #ffffff;
+    --grad-accent: linear-gradient(120deg, #047857, #065f46);
+  }
+  :root[data-theme="system"][data-accent="rose"],
+  :root[data-theme="system"] [data-accent="rose"] {
+    --accent: #be185d;
+    --accent-rgb: 190, 24, 93;
+    --accent-solid: #9d174d;
+    --on-accent: #ffffff;
+    --grad-accent: linear-gradient(120deg, #be185d, #9d174d);
+  }
+  /* The admin accent picker's light-mode label hue (see the chip rules in the admin panel
+     section), again for `system` on a light OS. */
+  :root[data-theme="system"] .accent-opt { color: var(--accent-solid); }
+  /* The grouping labels inside a panel ("Feedback page", "Credit lines", snapshots), for the
+     same reason as the chips: `--accent` only just clears AA on the panel's light surface. */
+  :root[data-theme="system"] .panel-group { color: var(--accent-solid); }
+}
+
+/* --- Base --- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; scrollbar-gutter: stable; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; line-height: 1.15; margin: 0; }
+/* Every link the site renders carries its own hover rule, so the bare-anchor
+   default only needs to say what a link *is* — the accent — and to stay
+   perceivable on hover, which it cannot do by colour alone now that one hue is in
+   force everywhere (D21): it underlines instead. */
+a { color: var(--accent); text-decoration: none; transition: color 0.15s ease; }
+a:not([class]):hover { text-decoration: underline; }
+button, input, textarea, select { font-family: var(--font-body); }
+
+/* Selection is the accent at low alpha; the text keeps its own colour rather than
+   being forced to white, which was unreadable on a light-theme selection (and on a
+   bright accent in dark mode). */
+::selection { background: rgba(var(--accent-rgb), 0.35); }
+
+/* --- Ambient background (colour + wallpaper + readability wash) --------------
+   Three stacked layers, painted behind everything (see D26):
+
+     1. `.bg-color`   — the admin's background colour, or nothing at all, in which
+                        case this layer is transparent and `body`'s `--bg` (which
+                        the browser propagates to the canvas) shows through.
+     2. `.bg-photo`   — the uploaded wallpaper, at the admin's anchor / size /
+                        attachment, faded by `--wp-opacity` so the colour shows
+                        through it.
+     3. `.bg-overlay` — `--photo-overlay`, the theme's wash, at full strength.
+
+   The wash is its own layer precisely so the transparency slider cannot fade it.
+   It is what keeps text readable over an arbitrary photo, so a slider that dimmed
+   both together would drop the page under AA exactly when a bright wallpaper was
+   chosen.
+
+   z-index −3 / −2 / −1, in that order: they must stay behind the
+   page's own stacking context, and `html` has no background of its own for the
+   canvas to paint over them. */
+.bg-color {
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  pointer-events: none;
+  /* Unset unless the admin picked a colour. */
+  background: var(--wp-color, transparent);
+}
+
+.bg-photo {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  /* `--wp-image` is set only while a wallpaper is active; without it this layer
+     paints nothing and the colour (or the canvas) shows through. */
+  background-image: var(--wp-image, none);
+  background-repeat: no-repeat;
+  /* The uploaded image's own alpha, from the transparency slider. */
+  opacity: var(--wp-opacity, 1);
+}
+
+.bg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--photo-overlay);
+}
+
+/* --- Wallpaper placement -----------------------------------------------------
+   One rule per id in `WALLPAPER_ANCHORS` / `WALLPAPER_SIZES`
+   (public/js/render.js), because each id is interpolated into a `data-` attribute
+   and an id with no rule here renders as *no* placement rather than as a wrong
+   one — a silent failure. `test/wallpaper.test.js` fails if the two lists drift.
+
+   `background-position` is written per anchor rather than with a shorthand
+   keyword, because the anchor is independent of a size like `natural`: `left`
+   only reads as "left" when the image is not being stretched to the viewport. */
+.bg-photo[data-anchor="center"] { background-position: center; }
+.bg-photo[data-anchor="top"] { background-position: center top; }
+.bg-photo[data-anchor="bottom"] { background-position: center bottom; }
+.bg-photo[data-anchor="left"] { background-position: left center; }
+.bg-photo[data-anchor="right"] { background-position: right center; }
+
+/* `cover`/`contain`/`stretch` cannot tile — a single copy is already the size of the
+   box — so `tile` alone turns repetition on. */
+.bg-photo[data-size="cover"] { background-size: cover; }
+.bg-photo[data-size="contain"] { background-size: contain; }
+.bg-photo[data-size="stretch"] { background-size: 100% 100%; }
+.bg-photo[data-size="tile"] {
+  background-size: auto;
+  background-repeat: repeat;
+}
+.bg-photo[data-size="natural"] { background-size: auto; }
+
+.container { width: 100%; max-width: var(--container); margin: 0 auto; padding: 0 24px; }
+
+main { flex: 1; }
+
+/* ============================================================================
+   Header
+   ============================================================================ */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--border);
+}
+.site-header .inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.12rem;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.brand .logo {
+  width: 30px; height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: var(--grad-accent);
+  box-shadow: 0 0 18px rgba(var(--accent-rgb), 0.45);
+  /* The mark is stroked in `currentColor` (the sprite says so) and so follows the
+     tile's accent fill: near-black on a bright accent, white on the darkened
+     light-mode one. Hard-coded white was unreadable on an amber tile. */
+  color: var(--on-accent);
+}
+.brand .logo svg { width: 17px; height: 17px; }
+.brand .logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 9px; display: block; }
+/* With a custom icon, drop the default gradient background + glow. */
+.brand.has-custom-icon .logo { background: transparent; box-shadow: none; }
+.brand:hover { color: var(--text); }
+.brand .brand-sub { color: var(--muted); font-weight: 500; margin-left: 0.15rem; }
+
+.header-right { display: flex; align-items: center; gap: 0.75rem; }
+
+/* The header's only control: one hamburger, right-aligned, identical on mobile and
+   desktop. The status pill and the Admin button it replaced now live inside the
+   fold-out menu. */
+.menu-toggle {
+  width: 42px; height: 42px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: color 0.18s var(--ease), background 0.18s var(--ease), border-color 0.18s var(--ease);
+}
+.menu-toggle:hover { color: var(--accent); border-color: var(--border-strong); background: var(--surface-2); }
+.menu-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.menu-toggle svg { width: 20px; height: 20px; }
+
+/* ============================================================================
+   Fold-out menu
+   ============================================================================ */
+/* The drawer is a SIBLING of <header>, not a child: `.site-header` carries a
+   `backdrop-filter`, which makes it a containing block for `position: fixed`
+   descendants — nested inside, the drawer would be sized and clipped against the
+   68px-tall header instead of the viewport. */
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 200;
+  width: min(380px, 88vw);
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+  padding: 1.4rem 1.5rem 1.6rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-left: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-lg);
+  /* Closed: parked off-screen.
+     It is hidden by `transform`, deliberately NOT by `visibility`/`display`:
+     `visibility: hidden` is a focusability gate that the browser only clears at
+     the frame lifecycle, so `closeBtn.focus()` inside chrome.js's open() was
+     silently refused and the panel opened with focus still on the trigger
+     (measured in Chromium — same task, forced reflow and setTimeout(0) all fail,
+     the second frame succeeds). Off-screen + `inert` keeps it out of the tab order
+     and the accessibility tree with no such gate. */
+  transform: translateX(100%);
+  pointer-events: none;
+  transition: transform 0.34s var(--ease);
+}
+.drawer.open {
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 190;
+  background: var(--backdrop);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s var(--ease);
+}
+.drawer-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* The page behind the drawer must not scroll. `scrollbar-gutter: stable` on `html`
+   keeps the scrollbar's width reserved, so hiding it cannot shift the layout. */
+body.menu-open { overflow: hidden; }
+
+.drawer-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.drawer-title { font-size: 1.4rem; letter-spacing: -0.02em; }
+.drawer-sub {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin: 0.25rem 0 0;
+}
+/* "Updated:" is white so the date stands out against the muted label text. */
+.drawer-sub-label { color: var(--text); font-weight: 600; }
+/* Credits / Feedback sit one line below the date and inherit its typography. */
+.drawer-links {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  /* The rule below separates the menu's identity block (name, date, links) from the
+     Status section. It sits on the links paragraph rather than `.drawer-head` so it
+     spans the content width instead of running underneath the close button, and it is
+     padded rather than margined so the line has breathing room above and below. */
+  margin: 0.9rem 0 0;
+  padding-bottom: 1.1rem;
+  border-bottom: 1px solid var(--border);
+}
+.drawer-links a { color: var(--muted); transition: color 0.18s var(--ease); }
+.drawer-links a:hover { color: var(--accent); }
+.drawer-close {
+  flex-shrink: 0;
+  width: 36px; height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.18s var(--ease);
+}
+.drawer-close:hover { color: var(--text); border-color: var(--border-strong); background: var(--surface-2); }
+.drawer-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.drawer-close svg { width: 18px; height: 18px; }
+
+.drawer-section { display: flex; flex-direction: column; gap: 0.7rem; }
+.drawer-summary { margin: 0; }
+
+/* Status counts — one divider-separated row each, matching the card footer. */
+.status-rows { display: flex; flex-direction: column; }
+.status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.status-row:last-child { border-bottom: none; }
+.status-row .k {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.status-row .v { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; color: var(--text); }
+.status-row .v.ok { color: var(--success); }
+.status-row .v.down { color: var(--danger); }
+
+/* Theme selector */
+.theme-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+.theme-opt {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.7rem 0.3rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: color 0.18s var(--ease), border-color 0.18s var(--ease), background 0.18s var(--ease);
+}
+.theme-opt svg { width: 17px; height: 17px; }
+/* The radio stays focusable (arrow keys move between the three) but is painted by
+   the label around it. */
+.theme-opt input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.theme-opt:hover { color: var(--text); border-color: var(--border-strong); }
+.theme-opt:has(input:checked) {
+  color: var(--accent);
+  border-color: rgba(var(--accent-rgb), 0.45);
+  background: rgba(var(--accent-rgb), 0.08);
+}
+.theme-opt:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* `margin-top: auto` parks the admin entry point at the bottom of the panel. */
+.drawer-foot { margin-top: auto; }
+.drawer-admin { width: 100%; justify-content: center; }
+
+/* ============================================================================
+   Hero
+   ============================================================================ */
+.hero {
+  padding-top: 5.5rem;
+  padding-bottom: 2.5rem;
+  text-align: center;
+}
+.hero .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding: 0.4rem 1rem;
+  border: 1px solid rgba(var(--accent-rgb), 0.25);
+  border-radius: 999px;
+  background: rgba(var(--accent-rgb), 0.07);
+}
+.hero h1 {
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  letter-spacing: -0.03em;
+  margin: 0 0 1rem;
+  color: var(--accent);
+  text-shadow: 0 0 32px rgba(var(--accent-rgb), 0.3);
+}
+.hero .subtitle {
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
+  color: var(--text);
+  max-width: 56ch;
+  margin: 0 auto;
+  line-height: 1.65;
+}
+
+/* Stats strip */
+.stats {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 2.5rem;
+}
+.stat {
+  min-width: 130px;
+  padding: 1.1rem 1.5rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.stat .value {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  background: var(--grad-accent); /* the accent's own two-stop gradient */
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.stat .value.ok { background: var(--grad-ok); -webkit-background-clip: text; background-clip: text; }
+.stat .value.down { background: var(--grad-down); -webkit-background-clip: text; background-clip: text; }
+.stat .label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 0.5rem;
+}
+
+/* ============================================================================
+   Services section
+   ============================================================================ */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
+  margin-top: 3rem;
+}
+
+/* Card */
+.service-card {
+  position: relative;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 1.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease), border-color 0.3s var(--ease);
+  animation: card-in 0.6s var(--ease) both;
+}
+
+/* The clickable group: thumbnail + description, with the shared hint line under
+   both. The hint is absolutely positioned so it is revealed where the user is
+   looking without reserving vertical space in the card. */
+.card-hit { position: relative; display: flex; flex-direction: column; gap: 1.1rem; }
+
+/* Thumbnail slot. `position: relative` anchors the transparent button stretched
+   over the image; with no thumbnail (the button is `[hidden]`) this collapses — it
+   has no text to give it a line box. */
+.card-thumb-wrap { position: relative; }
+/* Set on cards the browser renders in place of server-rendered markup: the cards
+   are already on screen, so re-running card-in would make the grid jump. */
+.service-card.no-anim { animation: none; }
+.service-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.5), transparent 40%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.service-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+}
+.service-card:hover::before { opacity: 1; }
+
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.icon-box {
+  width: 52px; height: 52px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--accent-soft);
+  border: 1px solid var(--border);
+  font-size: 1.6rem;
+  overflow: hidden;
+}
+.icon-box img { width: 100%; height: 100%; object-fit: cover; }
+.card-head .title-wrap { min-width: 0; }
+.card-head h3 {
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card-head h3 a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s var(--ease);
+}
+.card-head h3 a:hover { color: var(--accent); }
+.card-head .host {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted-2);
+  margin-top: 0.15rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card-desc { color: var(--text-soft); font-size: 0.92rem; }
+
+/* Clickable card description → opens the service detail dialog. */
+.card-desc-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+.card-desc-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.card-desc-btn:hover .card-desc { color: var(--text); }
+/* The description and the thumbnail above it are one clickable group: hovering
+   either keeps the description tinted, so moving between them doesn't flicker. */
+.service-card:has(.card-thumb-btn[data-detail]:hover) .card-desc { color: var(--text); }
+/* In flow, so the card footer's divider line always sits *below* the hint. Hidden
+   with `visibility` rather than `display` so it keeps its line: revealing it then
+   cannot reflow the card or the grid. */
+.desc-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted-2);
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.2s var(--ease);
+}
+/* Revealed by the group rules above (`.card-hit:has(...)`), which flip `opacity`;
+   `visibility` follows so it becomes perceivable and clickable at the same time. */
+.card-hit:has(.card-desc-btn[data-detail]:hover) .desc-hint,
+.card-hit:has(.card-desc-btn[data-detail]:focus-visible) .desc-hint,
+.card-hit:has(.card-thumb-btn[data-detail]:hover) .desc-hint,
+.card-hit:has(.card-thumb-btn[data-detail]:focus-visible) .desc-hint,
+.card-hit:active .desc-hint { opacity: 1; visibility: visible; }
+.desc-hint svg { width: 13px; height: 13px; }
+
+/* Thumbnail: spans the card content width, same as the description below.
+   The image and the description act as ONE element: hovering or touching either
+   half reveals the shared hint line below the description — the same place it
+   appears when you hover the text itself.
+   The button is a transparent layer stretched over the static image (see
+   `.card-thumb-wrap`), not a container for the hint. `display` is declared on
+   `[data-detail]` rather than the bare class because `[hidden] { display: none
+   !important }` (end of file) wins over it: a card whose thumbnail button is
+   hidden has no text of its own, and `.card-thumb-wrap` collapses with it. */
+.card-thumb-btn[data-detail] {
+  position: absolute;
+  inset: 0;
+  display: block;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+.card-thumb-btn[data-detail]:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+/* Fills the wrapper; `display: block` also removes the inline baseline gap that
+   would otherwise leave a stray line box under the image. */
+.card-thumb {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  transition: filter 0.25s var(--ease), border-color 0.25s var(--ease), box-shadow 0.25s var(--ease);
+}
+/* Hovering the image tints the thumbnail; the group rule keeps the description
+   text tinted at the same time so the two read as one control. */
+.card-thumb-btn[data-detail]:hover .card-thumb {
+  border-color: var(--border-strong);
+  filter: brightness(1.12);
+  box-shadow: 0 0 0 1px rgba(var(--accent-rgb), 0.25), 0 10px 28px -14px rgba(0, 0, 0, 0.8);
+}
+
+/* The card reserves this much room at the bottom for the hint line plus its gap,
+   so the hint can sit above the divider without the card growing on reveal. */
+.service-card { padding-bottom: 3.4rem; }
+
+.card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+/* Status */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.status .dot { position: relative; width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.status.up .dot { background: var(--success); box-shadow: 0 0 10px var(--success); }
+.status.up .dot::after {
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  background: var(--success); animation: ping 1.8s var(--ease) infinite;
+}
+.status.down .dot { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
+.status.unknown .dot { background: var(--warning); box-shadow: 0 0 8px var(--warning); }
+.status .txt { letter-spacing: 0.02em; }
+.status.up { color: var(--success); }
+.status.down { color: var(--danger); }
+.status.unknown { color: var(--warning); }
+
+.latency {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.latency svg { width: 13px; height: 13px; }
+
+.open-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+.open-link svg { width: 15px; height: 15px; transition: transform 0.2s var(--ease); }
+.open-link:hover svg { transform: translate(2px, -2px); }
+.open-link:hover { color: var(--accent); }
+
+.card-links {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+.github-link {
+  display: inline-flex;
+  align-items: center;
+  color: var(--muted);
+  transition: color 0.2s var(--ease);
+}
+.github-link svg { width: 16px; height: 16px; }
+.github-link:hover { color: var(--accent); }
+
+/* Empty + loading states */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--muted);
+  padding: 4rem 1rem;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+}
+.empty-state .big { font-size: 2.2rem; margin-bottom: 0.5rem; }
+
+/* ============================================================================
+   Service detail dialog
+   ============================================================================ */
+/* Note: `display` is only set on the open state — the UA hides closed dialogs
+   with `dialog:not([open]) { display: none }`, which a bare `display: flex`
+   would override and make the dialog permanently visible. */
+.detail-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+.detail-dialog {
+  width: min(680px, calc(100vw - 2rem));
+  max-height: min(85vh, 760px);
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-lg);
+  color: var(--text);
+  overflow: hidden;
+  animation: dialog-in 0.28s var(--ease);
+}
+.detail-dialog::backdrop {
+  background: var(--backdrop);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.detail-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.4rem 1.6rem 0.9rem;
+}
+.detail-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+.detail-title-wrap .icon-box { width: 48px; height: 48px; font-size: 1.4rem; }
+.detail-title-wrap h3 { font-size: 1.25rem; }
+.detail-close {
+  flex-shrink: 0;
+  width: 36px; height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.18s var(--ease);
+}
+.detail-close:hover { color: var(--text); border-color: var(--border-strong); background: var(--surface-2); }
+.detail-close svg { width: 18px; height: 18px; }
+
+.detail-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 1.6rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Audience badge (Personal / Worth sharing / Open source) */
+.audience-badge {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  background: var(--surface);
+}
+.audience-badge.shared {
+  color: var(--accent);
+  border-color: rgba(var(--accent-rgb), 0.3);
+  background: rgba(var(--accent-rgb), 0.08);
+}
+.audience-badge.open-source {
+  color: var(--success);
+  border-color: rgba(var(--success-rgb), 0.3);
+  background: rgba(var(--success-rgb), 0.08);
+}
+
+.detail-body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 1.2rem 1.6rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+.detail-thumb {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+}
+.detail-section h4,
+.drawer-section h3 {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 0.6rem;
+}
+.detail-section p { margin: 0 0 0.6rem; color: var(--text-soft); font-size: 0.95rem; line-height: 1.65; }
+.detail-section p:last-child { margin-bottom: 0; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.chip {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-soft);
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.detail-foot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.6rem 1.4rem;
+  border-top: 1px solid var(--border);
+}
+
+@keyframes dialog-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ============================================================================
+   Footer
+   ============================================================================ */
+.site-footer {
+  margin-top: 3rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--border);
+  background: var(--footer-bg);
+}
+.site-footer .inner {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+.site-footer .inner p { margin: 0; }
+.site-footer a { color: var(--muted); }
+.site-footer a:hover { color: var(--accent); }
+
+/* ============================================================================
+   Credits page
+   ============================================================================ */
+.credits-list {
+  max-width: 560px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.credit-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.credit-role {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.credit-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text);
+  transition: color 0.2s var(--ease);
+}
+.credit-link svg { width: 14px; height: 14px; transition: transform 0.2s var(--ease); }
+.credit-link:hover { color: var(--accent); }
+.credit-link:hover svg { transform: translate(2px, -2px); }
+.credits-note {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 1rem;
+  color: var(--text);
+  line-height: 1.6;
+}
+/* The note is editable and may be several paragraphs; the first one carries the
+   spacing from the list above, the rest sit together. */
+.credits-note + .credits-note { margin-top: 0.75rem; }
+
+/* ============================================================================
+   Feedback page
+   ============================================================================ */
+.form-card {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-md);
+}
+.form-intro { color: var(--text-soft); font-size: 0.95rem; line-height: 1.65; margin: 0 0 1rem; }
+.form-intro:last-of-type { margin-bottom: 1.8rem; }
+.form-card .hint { display: block; color: var(--muted-2); font-size: 0.78rem; margin-top: 0.35rem; }
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 0.4rem;
+}
+.form-hint { color: var(--muted-2); font-size: 0.78rem; margin: 0; font-family: var(--font-mono); }
+
+/* Confirmation. Colour-coded like the status badges, and a filled panel rather than a
+   line of text so a success is unmissable after writing a long message. */
+.form-status {
+  margin: 1.2rem 0 0;
+  padding: 0.9rem 1.1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  border: 1px solid var(--border);
+}
+.form-status.ok {
+  color: var(--success);
+  border-color: rgba(var(--success-rgb), 0.35);
+  background: rgba(var(--success-rgb), 0.1);
+}
+.form-status.error {
+  color: var(--danger);
+  border-color: rgba(var(--danger-rgb), 0.35);
+  background: rgba(var(--danger-rgb), 0.1);
+}
+
+/* Honeypot. Deliberately NOT `display: none` or `[hidden]`: many bots skip fields
+   they can tell are hidden that way, and some autofillers ignore them too. It is
+   positioned off-screen and removed from the tab order and the accessibility tree
+   by the markup, so a sighted and a screen-reader visitor both never meet it. */
+.hp-field {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.panel-sub { color: var(--muted); font-size: 0.88rem; margin: -0.8rem 0 1.4rem; }
+
+/* ============================================================================
+   Buttons
+   ============================================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.3rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.18s var(--ease);
+}
+.btn:hover { border-color: var(--border-strong); background: var(--surface-2); }
+.btn svg { width: 16px; height: 16px; }
+/* Accent focus ring, like every other control. The UA default was visible but
+   off-palette, which left the buttons the odd ones out. */
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* The site's one primary action: a solid fill of the accent. The fill and its text
+   colour come from a matched per-theme token pair (`--accent-solid` / `--on-accent`)
+   so neither theme can end up with unreadable text — dark takes the hue as it is
+   with near-black text, light darkens it until white clears AA (D21). */
+.btn.primary {
+  background: var(--accent-solid);
+  color: var(--on-accent);
+  border: none;
+  box-shadow: 0 8px 24px -8px rgba(var(--accent-rgb), 0.55);
+}
+.btn.primary:hover {
+  background: var(--accent-solid);
+  color: var(--on-accent);
+  /* Lifts rather than brightens: brightening a dark accent in light mode would drop
+     the text back under the AA contrast threshold. */
+  transform: translateY(-1px);
+  box-shadow: 0 12px 30px -8px rgba(var(--accent-rgb), 0.7);
+}
+.btn.ghost { background: transparent; }
+.btn.ghost:hover { color: var(--accent); }
+.btn.danger { color: var(--danger); border-color: rgba(var(--danger-rgb), 0.3); }
+.btn.danger:hover { background: rgba(var(--danger-rgb), 0.1); border-color: rgba(var(--danger-rgb), 0.5); }
+.btn.small { padding: 0.4rem 0.85rem; font-size: 0.8rem; border-radius: 9px; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ============================================================================
+   Forms
+   ============================================================================ */
+.field { margin-bottom: 1.1rem; }
+/* A field's own label, and only that. The direct-child form matters: the descendant form
+   (`.field label`) also matched `<label>` elements *nested* in a field's content — the
+   accent picker's chips live inside the "Accent colour" field, and a chip is a component
+   with its own colour, font and size, not a field label. The descendant form silently beat
+   the chip's own rule on specificity (0,1,1 vs 0,1,0), so the chips rendered in the field
+   label's grey display font. `test/theme.test.js` fails if the descendant form comes back. */
+.field > label {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 0.83rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: var(--text-soft);
+}
+.field label .opt { color: var(--muted-2); font-weight: 400; font-family: var(--font-mono); font-size: 0.7rem; }
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--input-bg);
+  color: var(--text);
+  font-size: 0.92rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.field textarea { resize: vertical; min-height: 80px; }
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.2);
+}
+.field input::placeholder, .field textarea::placeholder { color: var(--muted-2); }
+
+/* In-field clear.
+   The control lives inside the input's right edge rather than under it. That is the whole
+   point: a second control below an input adds vertical space to *one* column of a
+   `.field-row` grid, pushing that column's hint out of line with its neighbour's — the
+   alignment problem this replaced a row of "Clear" buttons to avoid.
+
+   The input keeps its full width and always reserves the button's room, so typed text never
+   runs under the glyph and nothing shifts sideways when it appears at the first character.
+   The button is `hidden` unless there is something to clear (see `syncClearButtons` in
+   feedback.js) — `[hidden]` below is `!important`, so it beats this rule's `display: grid`. */
+.input-clear { position: relative; }
+.input-clear input { padding-right: 2.6rem; }
+.input-clear-btn {
+  position: absolute;
+  top: 50%;
+  right: 0.55rem;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--muted-2);
+  cursor: pointer;
+  transition: color 0.15s var(--ease);
+}
+.input-clear-btn:hover { color: var(--accent); }
+.input-clear-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.input-clear-btn svg { display: block; width: 18px; height: 18px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.checkbox { display: flex; align-items: center; gap: 0.6rem; cursor: pointer; }
+.checkbox input { width: 18px; height: 18px; accent-color: var(--accent); }
+.checkbox span { font-family: var(--font-body); font-size: 0.9rem; color: var(--text-soft); }
+
+.form-error {
+  color: var(--danger);
+  font-size: 0.85rem;
+  margin-top: 0.6rem;
+}
+
+/* Icon uploader */
+.icon-uploader { display: flex; align-items: center; gap: 1.25rem; }
+.icon-uploader .preview {
+  width: 64px; height: 64px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  object-fit: cover;
+}
+.icon-uploader .preview.thumb {
+  width: 128px; height: 72px; /* 16:9 */
+  border-radius: 10px;
+}
+.icon-uploader .controls { display: flex; flex-direction: column; gap: 0.6rem; }
+.icon-uploader .controls .row { display: flex; gap: 0.6rem; }
+.icon-uploader .controls input[type="file"] { font-size: 0.82rem; color: var(--muted); }
+.icon-uploader .hint { color: var(--muted-2); font-size: 0.75rem; line-height: 1.4; }
+@media (max-width: 720px) { .icon-uploader { flex-direction: column; align-items: flex-start; } }
+
+/* Wallpaper uploader — the icon uploader's layout, with a 16:9 preview because the
+   thing being managed is a picture of a screen. `preview.wallpaper` is set as its
+   own class rather than a second size on `.thumb`: the two read as the same control
+   but one is cropped artwork and one is a photograph of the whole page. */
+.wallpaper-uploader { display: flex; align-items: flex-start; gap: 1.25rem; }
+.wallpaper-uploader .preview.wallpaper {
+  width: 192px;
+  height: 108px; /* 16:9 */
+  flex-shrink: 0;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  object-fit: cover;
+}
+/* No wallpaper: the preview slot stays in the layout and says so, rather than
+   collapsing and shifting the controls up beside nothing. */
+.wallpaper-uploader .preview.empty { visibility: hidden; }
+.wallpaper-uploader .controls { display: flex; flex-direction: column; gap: 0.6rem; min-width: 0; }
+.wallpaper-uploader .controls .row { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+.wallpaper-uploader .controls input[type="file"] { font-size: 0.82rem; color: var(--muted); max-width: 100%; }
+.wallpaper-uploader .hint { color: var(--muted-2); font-size: 0.75rem; line-height: 1.4; }
+.wallpaper-uploader .hint[hidden] { display: none; }
+@media (max-width: 720px) { .wallpaper-uploader { flex-direction: column; } }
+
+/* Colour picker: the swatch plus the hex it holds, with the clear ✕ in the field
+   rather than under it (a control below an input adds height to one column of a
+   `.field-row`, which breaks that row's alignment). */
+.color-input { display: flex; align-items: center; gap: 0.6rem; position: relative; }
+.color-input input[type="color"] {
+  width: 48px;
+  height: 40px;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--input-bg);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.color-input output { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); }
+.color-input .input-clear-btn { position: static; transform: none; }
+
+/* Slider + its value, on one line so the number never jumps the row's height. */
+.range-row { display: flex; align-items: center; gap: 0.75rem; }
+.range-row input[type="range"] { flex: 1; min-width: 0; accent-color: var(--accent); }
+.range-row output { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); min-width: 3ch; text-align: right; }
+
+/* Says out loud that the wallpaper block belongs to the Save button below it — the
+   icon uploader above saves on its own, so the difference needs stating. */
+.panel-hint { margin: 0.25rem 0 1rem; color: var(--muted-2); font-size: 0.78rem; }
+
+/* ============================================================================
+   Admin panel
+   ============================================================================ */
+.admin-main { padding: 2.5rem 0 4rem; }
+.admin-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.admin-head h1 { font-size: 1.8rem; }
+.admin-head p { color: var(--muted); margin: 0.3rem 0 0; }
+.admin-head .actions { display: flex; gap: 0.6rem; }
+
+.panel {
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 1.8rem;
+  margin-bottom: 1.75rem;
+}
+.panel h2 {
+  font-size: 1.1rem;
+  margin-bottom: 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.panel h2 svg { width: 18px; height: 18px; color: var(--accent); }
+
+/* Accent picker. Every chip is painted in the accent it offers — label, border, tint and
+   swatch — so the choice is made by looking, not by reading five grey labels. Each chip
+   carries its own `data-accent`, and the accent blocks in style.css match any element
+   carrying the attribute, not just `:root`.
+   
+   The chip's tint costs contrast, and the palette clears AA by a thin margin (amber in
+   light mode is 4.64:1 on the plain background, 4.19:1 on its own 8% tint), so the label
+   takes the theme's *darker* hue: `--accent-solid` in light mode, `--accent` in dark. That
+   keeps the worst accent at 5.29:1 on the tint (4.76:1 on hover) — `test/theme.test.js`
+   composites the tint and asserts it, so a future palette edit cannot quietly break it. */
+.accent-options { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.accent-opt {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid rgba(var(--accent-rgb), 0.45);
+  border-radius: var(--radius-sm);
+  background: rgba(var(--accent-rgb), 0.08);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: color 0.18s var(--ease), border-color 0.18s var(--ease), background 0.18s var(--ease);
+}
+/* The radio stays focusable (arrow keys move between the options) but is painted by
+   the label around it. */
+.accent-opt input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.accent-opt .swatch {
+  width: 15px; height: 15px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  /* The button fill, not the text hue: in light mode those differ (the fill is the
+     darker one white text sits on), and the picker should show what it will paint. */
+  background: var(--accent-solid);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+.accent-opt:hover { border-color: var(--accent-solid); background: rgba(var(--accent-rgb), 0.16); }
+/* In force: a solid border plus a check mark. Both are needed — with every chip coloured,
+   colour alone can no longer say which one is selected. The check is always in the layout
+   (opacity, not `display`) so marking it cannot shift the row. */
+.accent-opt:has(input:checked) { border-color: var(--accent-solid); }
+.accent-opt .accent-check { width: 13px; height: 13px; opacity: 0; transition: opacity 0.18s var(--ease); }
+.accent-opt:has(input:checked) .accent-check { opacity: 1; }
+.accent-opt:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* The darker hue in light mode; see the contrast note above. Declared for the explicit
+   choice and again for `system` on a light OS, like the light palettes. */
+:root[data-theme="light"] .accent-opt { color: var(--accent-solid); }
+
+/* Table */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+thead th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0.7rem 0.8rem;
+  border-bottom: 1px solid var(--border);
+}
+tbody td { padding: 0.9rem 0.8rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tbody tr { transition: background 0.15s ease; }
+tbody tr:hover { background: var(--surface-2); }
+tbody tr:last-child td { border-bottom: none; }
+.td-name { font-weight: 600; color: var(--text); }
+.td-icon {
+  width: 26px; height: 26px;
+  border-radius: 7px;
+  object-fit: cover;
+  vertical-align: middle;
+  margin-right: 0.6rem;
+}
+.td-icon-emoji { margin-right: 0.6rem; }
+.td-url { font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.td-actions { white-space: nowrap; text-align: right; }
+.td-actions .btn { margin-left: 0.4rem; }
+
+/* Page text panel: the credit-line editor.
+   Rows are table rows so they look like the services table above them — the same
+   columns, hover and borders — with the drag handle in the first cell. */
+.panel-group {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 1.7rem 0 1rem;
+}
+
+/* A grouping label inside a panel — "Feedback page", "Credits page", "Credit lines",
+   "Pre-restore snapshots". These take the accent so a long panel reads as sections rather
+   than as one grey run of labels: muted grey is right for a field's label, but a heading that
+   divides a panel needs to register as a heading at a glance.
+
+   The colour follows the accent chips' rule from D24. Measured against the panel's own
+   surface (a composited `--surface`, not the plain page background): in dark mode the accent
+   is the comfortable one (worst case violet, 7.14:1) while `--accent-solid` falls to 4.59:1;
+   in light mode it is the other way round (amber 4.97:1 for `--accent` against 6.27:1 for
+   `--accent-solid`). This is 11.5px uppercase text, i.e. "normal" under WCAG, so 4.5:1 is
+   the bar in both themes. Declared for the explicit light choice and again for `system` on a
+   light OS, like every other light override. */
+.panel-group { color: var(--accent); }
+:root[data-theme="light"] .panel-group { color: var(--accent-solid); }
+.panel-group:first-of-type { margin-top: 0; }
+.th-handle { width: 44px; }
+.credit-input {
+  width: 100%;
+  min-width: 130px;
+  padding: 0.45rem 0.6rem;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--input-bg);
+  color: var(--text);
+  font-size: 0.85rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.credit-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.2);
+}
+.credit-input::placeholder { color: var(--muted-2); }
+.credit-role-input { font-family: var(--font-mono); font-size: 0.78rem; }
+.credit-url-input { font-family: var(--font-mono); font-size: 0.76rem; }
+/* The line being dragged, so the drop position is readable while it moves. */
+tr.is-dragging { opacity: 0.45; }
+tr.is-dragging > td { background: var(--surface-2); }
+.drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: none;
+  color: var(--muted-2);
+  cursor: grab;
+  /* The handle is a drag surface, not a scroll surface: without this a touch drag
+     scrolls the table instead of reordering it. */
+  touch-action: none;
+}
+.drag-handle:hover { color: var(--text); border-color: var(--border); }
+.drag-handle:active { cursor: grabbing; }
+.drag-handle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.drag-handle svg { width: 15px; height: 15px; }
+
+/* Status badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+}
+.badge .dot { width: 7px; height: 7px; border-radius: 50%; }
+.badge.up { color: var(--success); background: rgba(var(--success-rgb), 0.12); }
+.badge.up .dot { background: var(--success); }
+.badge.down { color: var(--danger); background: rgba(var(--danger-rgb), 0.12); }
+.badge.down .dot { background: var(--danger); }
+.badge.unknown { color: var(--warning); background: rgba(var(--warning-rgb), 0.12); }
+.badge.unknown .dot { background: var(--warning); }
+
+/* Login */
+.auth-wrap { min-height: 60vh; display: grid; place-items: center; padding: 3rem 0; }
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 2.5rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--shadow-lg);
+}
+/* The login card is a centred header block — logo, "Sign in" and the one-line
+   description — over a left-aligned form. */
+.auth-card .logo {
+  width: 52px; height: 52px; border-radius: 14px;
+  background: var(--grad-accent); display: grid; place-items: center;
+  margin: 0 auto 1.25rem; box-shadow: 0 0 30px rgba(var(--accent-rgb), 0.5);
+  /* Same as the header brand: the mark follows the tile's accent fill. */
+  color: var(--on-accent);
+}
+.auth-card .logo svg { width: 28px; height: 28px; }
+/* With an uploaded site icon the mark is the image itself: drop the default
+   gradient tile and its glow, exactly as `.brand.has-custom-icon` does. */
+.auth-card .logo.has-custom-icon { background: transparent; box-shadow: none; }
+.auth-card .logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 14px; display: block; }
+.auth-card h1 { font-size: 1.5rem; margin-bottom: 0.35rem; text-align: center; }
+.auth-card .sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; text-align: center; }
+/* The card has exactly one action and it spans the card. Declared here rather than
+   as a `style=` attribute on the button (CSP allows inline styles, but the fewer
+   the better — see the deferred note in docs/decisions.md). */
+.auth-card .btn { width: 100%; justify-content: center; }
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 1.75rem;
+  right: 1.75rem;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.25rem;
+  border-radius: 14px;
+  background: var(--bg-2);
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  font-size: 0.9rem;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(20px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast svg { width: 18px; height: 18px; }
+.toast.success svg { color: var(--success); }
+.toast.error svg { color: var(--danger); }
+
+/* Hidden. Note the `!important`: it beats any `display` a component declares, so a
+   component that is sometimes `hidden` must declare its `display` on a state that
+   excludes `[hidden]` (see `.card-thumb-btn[data-detail]`). */
+[hidden] { display: none !important; }
+
+/* ============================================================================
+   Backup & restore (admin panel)
+   ============================================================================ */
+.backup-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 0.4rem; }
+
+.snapshot-list { list-style: none; margin: 0; padding: 0; }
+.snapshot-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.snapshot-list li:last-child { border-bottom: none; }
+.snapshot-name { font-family: var(--font-mono); font-size: 0.78rem; color: var(--text); overflow-wrap: anywhere; }
+.snapshot-meta { color: var(--muted); font-size: 0.78rem; }
+/* The download button goes to the right edge of the row, matching `.td-actions`. */
+.snapshot-list .btn { margin-left: auto; }
+
+/* The restore dialog. Same construction as the service detail dialog above, and the same
+   caveat: `display` is declared only on the open state, because the UA hides a closed
+   dialog with `dialog:not([open])` and a bare `display: flex` would override it and leave
+   the dialog permanently on screen. */
+.modal[open] { display: flex; flex-direction: column; }
+.modal {
+  width: min(620px, calc(100vw - 2rem));
+  max-height: min(88vh, 820px);
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-lg);
+  color: var(--text);
+  overflow: hidden;
+  animation: dialog-in 0.28s var(--ease);
+}
+.modal::backdrop {
+  background: var(--backdrop);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.4rem 1.6rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.modal-head h2 { display: flex; align-items: center; gap: 0.6rem; font-size: 1.15rem; }
+.modal-head h2 svg { width: 18px; height: 18px; color: var(--accent); }
+.modal-close {
+  flex-shrink: 0;
+  width: 36px; height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.18s var(--ease);
+}
+.modal-close:hover { color: var(--text); border-color: var(--border-strong); background: var(--surface-2); }
+.modal-close svg { width: 18px; height: 18px; }
+
+/* The body scrolls, the head does not: with two steps the dialog's height changes, and a
+   scrolling title bar would be the thing that moves under the pointer. */
+.modal-body { padding: 1.4rem 1.6rem 1.5rem; overflow-y: auto; }
+.modal-lead { font-size: 0.95rem; margin-bottom: 1rem; }
+.modal-lead strong { color: var(--danger); }
+
+/* What the restore does, spelled out above the file picker rather than after it. */
+.modal-warn { margin: 0 0 1.2rem; padding-left: 1.1rem; color: var(--muted); font-size: 0.86rem; line-height: 1.65; }
+.modal-warn strong { color: var(--text-soft); }
+
+.modal-confirm {
+  align-items: flex-start;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(var(--danger-rgb), 0.3);
+  border-radius: var(--radius-sm);
+  background: rgba(var(--danger-rgb), 0.07);
+}
+.modal-confirm input { margin-top: 0.15rem; }
+
+.modal-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1.2rem; }
+.modal-actions.end { justify-content: flex-end; margin: 1.4rem 0 0; }
+
+.archive-meta { display: grid; grid-template-columns: auto 1fr; gap: 0.35rem 1rem; margin: 0 0 1.4rem; font-size: 0.86rem; }
+/* `display: contents` lets one <dt>/<dd> pair be a grid item of the list above it without
+   wrapping them in an element the grid would have to know about. */
+.archive-meta div { display: contents; }
+.archive-meta dt {
+  align-self: center;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.archive-meta dd { margin: 0; color: var(--text-soft); }
+
+/* The snapshots block is a sub-section of the panel, not a continuation of the buttons above
+   it — so it owns its own space and is set off by a hairline rule, the same `--border` the
+   table rows use.
+
+   It has to carry that space itself because `.panel-group:first-of-type` (above) drops the
+   top margin of a heading that opens a block, and inside this wrapper the heading *is* the
+   first `<h3>` — so the rule matches and leaves it flush against the buttons. The margin is
+   restated here rather than left to that reset: the spacing belongs to the wrapper, and it
+   should not silently vanish if the wrapper's first child ever changes.
+
+   The heading's colour is not repeated here — `.panel-group` is accent-coloured everywhere,
+   which is what this label wants too. */
+.snapshots-section {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+.snapshots-section .panel-group { margin-top: 0; }
+
+/* The category picker. Selected rows take the accent, like `.accent-opt` does — the same
+   `:has(input:checked)` idiom, so both pickers read the same way. */
+.category-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.category-opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  cursor: pointer;
+  transition: border-color 0.18s var(--ease), background 0.18s var(--ease);
+}
+.category-opt:hover { border-color: var(--border-strong); }
+.category-opt:has(input:checked) { border-color: rgba(var(--accent-rgb), 0.45); background: rgba(var(--accent-rgb), 0.06); }
+.category-opt:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+.category-opt input { width: 18px; height: 18px; margin-top: 0.15rem; flex-shrink: 0; accent-color: var(--accent); }
+.category-text { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+.category-label { display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; font-size: 0.92rem; color: var(--text); }
+.category-count { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent); }
+.category-hint { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+/* The one line in the restore modal that is about the live site rather than the archive:
+   restoring this category would remove something that is deployed now. Warning-coloured
+   rather than danger-coloured — it is a consequence to weigh, not an error to fix. */
+.category-warn {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--warning);
+}
+
+/* ============================================================================
+   Animations
+   ============================================================================ */
+@keyframes ping {
+  0% { transform: scale(1); opacity: 0.8; }
+  80%, 100% { transform: scale(2.6); opacity: 0; }
+}
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(18px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fade-up 0.7s var(--ease) both; }
+.fade-up.d1 { animation-delay: 0.08s; }
+.fade-up.d2 { animation-delay: 0.16s; }
+
+/* ============================================================================
+   Responsive
+   ============================================================================ */
+@media (max-width: 720px) {
+  .services-grid { grid-template-columns: 1fr; }
+  .field-row { grid-template-columns: 1fr; }
+  .hero { padding-top: 3.5rem; padding-bottom: 1.5rem; }
+  .admin-head .actions { width: 100%; }
+  .admin-head .actions .btn { flex: 1; justify-content: center; }
+  .panel { padding: 1.3rem; }
+
+  /* Detail dialog becomes a bottom sheet on small screens. */
+  .detail-dialog {
+    width: 100%;
+    max-width: none;
+    max-height: 92dvh;
+    margin: auto auto 0;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    border-bottom: none;
+  }
+  .detail-dialog::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 44px;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--border-strong);
+  }
+  .detail-head { padding: 1.6rem 1.2rem 0.8rem; }
+  .detail-meta { padding: 0 1.2rem 0.9rem; }
+  .detail-body { padding: 1rem 1.2rem 1.2rem; }
+  .detail-foot { padding: 0.9rem 1.2rem 1.2rem; }
+
+  /* The restore dialog gets the same treatment, so both dialogs behave the same way. */
+  .modal {
+    width: 100%;
+    max-width: none;
+    max-height: 92dvh;
+    margin: auto auto 0;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    border-bottom: none;
+  }
+  .modal::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 44px;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--border-strong);
+  }
+  .modal-head { padding: 1.6rem 1.2rem 0.9rem; }
+  .modal-body { padding: 1.2rem; }
+  .snapshot-list .btn { margin-left: 0; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  html { scroll-behavior: auto; }
+}

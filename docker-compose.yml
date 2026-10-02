@@ -1,0 +1,63 @@
+services:
+  services:
+    build: .
+    container_name: vibefolio
+    restart: unless-stopped
+    init: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    mem_limit: 256m
+    cpus: 0.5
+    pids_limit: 100
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DB_PATH=/app/data/services.db
+      - BROWSERLESS_URL=http://screenshot-service:3000
+      - BROWSERLESS_TOKEN=${BROWSERLESS_TOKEN:-}
+    volumes:
+      - services-data:/app/data
+    networks:
+      - proxy-net
+      - screenshot-net
+    # Internal port only — nginx-proxy-manager reaches it via proxy-net by
+    # container name:port (vibefolio:3000). No host port is published.
+    expose:
+      - "3000"
+
+  # Headless-Chromium screenshot service used to capture service thumbnails.
+  # Only reachable by the app on the dedicated screenshot-net network — no
+  # published port, not attached to proxy-net.
+  screenshot-service:
+    image: browserless/chrome
+    container_name: vibefolio-screenshot
+    restart: unless-stopped
+    init: true
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 1g
+    cpus: 1.0
+    environment:
+      - TOKEN=${BROWSERLESS_TOKEN:-}
+      - CONCURRENT=2
+      - MAX_CONCURRENT_SESSIONS=2
+    networks:
+      - screenshot-net
+    expose:
+      - "3000"
+
+volumes:
+  services-data:
+
+networks:
+  proxy-net:
+    external: true
+  screenshot-net:
+    driver: bridge
