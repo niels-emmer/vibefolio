@@ -22,7 +22,7 @@ deliberately small — no build step, no framework, no ORM, no native dependenci
 | Database | Built-in `node:sqlite` (WAL mode) |
 | Auth | DB-backed session tokens + httpOnly `SameSite=Strict` cookie |
 | Frontend | Server-rendered HTML templates (`src/views/*.html`) + vanilla JS, custom "Midnight Glass" CSS (no framework) |
-| Container | `node:24-alpine`, multi-stage, non-root |
+| Container | `node:26-alpine`, multi-stage, non-root |
 
 ## Request flow
 

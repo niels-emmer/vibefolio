@@ -45,12 +45,12 @@ Runs as a single Docker container, designed to be fronted by **nginx-proxy-manag
 
 | Layer | Choice |
 |-------|--------|
-| Runtime | Node.js 24 (LTS) |
+| Runtime | Node.js 26 (LTS) |
 | Web framework | Express 5 |
 | Database | Built-in `node:sqlite` (WAL mode) |
 | Auth | DB-backed sessions + httpOnly cookie |
 | Frontend | Server-rendered HTML templates (`src/views/*.html`) + vanilla JS, custom "Midnight Glass" design system with self-hosted variable fonts (Space Grotesk, Inter, JetBrains Mono) |
-| Container | `node:24-alpine`, multi-stage, non-root |
+| Container | `node:26-alpine`, multi-stage, non-root |
 
 ## Design
 

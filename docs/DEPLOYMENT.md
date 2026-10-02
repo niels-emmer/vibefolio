@@ -48,7 +48,7 @@ ssh homeserver 'cd ~/projects/vibefolio && docker compose up -d --build'
 ## Container details (`docker-compose.yml`)
 
 - `container_name: vibefolio`, image built from the local `Dockerfile`
-  (`node:24-alpine`, multi-stage, non-root user).
+  (`node:26-alpine`, multi-stage, non-root user).
 - `env_file: .env` plus `environment:` overrides: `NODE_ENV=production`, `PORT=3000`,
   `DB_PATH=/app/data/services.db`.
 - Attached to the external **`proxy-net`** network; **no host port published** — nginx-proxy-manager
