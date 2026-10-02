@@ -236,6 +236,9 @@ without hand-holding:
 - **The test suite** (`npm test`) is the guardrail: an agent can prove a change end to end
   before claiming it works, and CI runs the same suite (plus a dependency audit) on every push
   and pull request.
+- **[`docs/AGENT-WORKFLOW.md`](docs/AGENT-WORKFLOW.md)** describes the *method* itself — one
+  lead agent with specialist subagents, the understand → verify loop, and the guardrails —
+  written tool-agnostically so it applies whatever agent you use.
 - **[`SECURITY.md`](SECURITY.md)** states the threat model and the accepted risks, so an agent
   touching auth, the health checker or the backup path knows the boundaries it must not cross.
 

@@ -316,7 +316,8 @@ moment the thing was run. Before claiming something works, exercise it: start th
 open the page, do the action. `docs/DEPLOYMENT.md` has a checklist for the deployed artefact
 specifically because a broken module still serves plausible HTML.
 
-- See `docs/` for architecture, development, and deployment details.
+- See `docs/` for architecture, development, deployment, and the
+  [agent workflow](docs/AGENT-WORKFLOW.md).
 
 ## Deployment (summary)
 

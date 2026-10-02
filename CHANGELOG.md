@@ -6,6 +6,12 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- [`docs/AGENT-WORKFLOW.md`](docs/AGENT-WORKFLOW.md) — a tool-agnostic description of how the
+  project is built with agents (one lead with specialist subagents, the understand → verify
+  loop, the guardrails) so other agentic developers can reproduce the approach.
+
 ### Security
 
 - Initial security policy published (`SECURITY.md`): threat model, controls, and
