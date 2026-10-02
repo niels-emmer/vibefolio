@@ -107,8 +107,8 @@ live check is what proves the deployed artefact, not the repo.
 
 - `.env` is gitignored (see `.gitignore`) and must never be committed or copied into the
   repo. All secrets come from the environment.
-- The repo's hosting is up to the deployer (the original was a private repo at
-  `github.com/<your-org>/vibefolio`). Do not add
+- The repo's hosting is up to the deployer (the upstream copy is at
+  `github.com/niels-emmer/vibefolio`). Do not add
   secrets, tokens, or credentials to any file.
 - `ALLOWED_ORIGINS` in the remote `.env` must include the public origin (e.g.
   `https://your-domain.example`) or the admin API's CSRF Origin check will reject browser

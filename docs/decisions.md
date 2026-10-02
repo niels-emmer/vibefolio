@@ -55,7 +55,7 @@ URLs keeps the field honest to its name.
 
 ### D8 — Deployment model & repo privacy
 **Chosen:** The repo is (for the original deployment) **private**, hosted at
-`github.com/<your-org>/vibefolio`.
+`github.com/niels-emmer/vibefolio`.
 Production runs from a **plain file copy** on the homeserver
 (`/home/<user>/projects/vibefolio`, replacing the first keeper's personal account) synced via
 rsync + `docker compose up -d --build` —

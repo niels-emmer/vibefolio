@@ -219,8 +219,8 @@ set -a; source .env; set +a; npm run dev
   and `BROWSERLESS_TOKEN`. All secrets come from the environment, never from source. The same
   applies to `.env.*` backups; the deploy rsync re-includes `.env.example` *before* sweeping
   `.env.*`, so a local backup of the real file is never copied to the server.
-- The repo's hosting is up to the deployer; the original lived at
-  **`github.com/<your-org>/vibefolio`** (default branch `main`). Do not add
+- The repo's hosting is up to the deployer; the upstream copy lives at
+  **`github.com/niels-emmer/vibefolio`** (default branch `main`). Do not add
   secrets, tokens, or credentials to any file.
 - Production refuses to boot with a placeholder `ADMIN_PASSWORD`.
 
