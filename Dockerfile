@@ -1,13 +1,13 @@
 # syntax=docker/dockerfile:1
 
 # ---- Build stage: install production dependencies ----
-FROM node:24-alpine AS build
+FROM node:26-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
 # ---- Runtime stage ----
-FROM node:24-alpine AS runtime
+FROM node:26-alpine AS runtime
 ENV NODE_ENV=production
 WORKDIR /app
 
