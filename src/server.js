@@ -47,7 +47,7 @@ app.set('trust proxy', (ip) => {
   // the stylesheet, the fonts and every script fail to load and the page renders unstyled,
   // with the raw icon sprites scattered down it. Chromium and Firefox are more forgiving
   // about HSTS from an insecure origin on localhost, which is why this only showed up on
-  // Safari. Production sits behind nginx-proxy-manager and does serve HTTPS, so there it is
+  // Safari. Production sits behind a TLS-terminating reverse proxy and does serve HTTPS, so there it is
   // still the right header.
   //
   // Gated on `isProd` rather than on a hostname check: the header's correctness depends on

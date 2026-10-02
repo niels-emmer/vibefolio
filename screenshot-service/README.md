@@ -18,7 +18,7 @@ image as a separate container — the app container stays small and dependency-f
 
 The service is attached only to the dedicated **`screenshot-net`** bridge network
 (defined in `docker-compose.yml`). It has **no published port** and is **not** on
-`proxy-net`, so only the app container can reach it. It does need outbound internet
+the reverse-proxy network, so only the app container can reach it. It does need outbound internet
 to screenshot the (public) service URLs.
 
 ## Configuration
@@ -37,7 +37,7 @@ openssl rand -hex 24
 ## Security notes
 
 - The service is internal-only (dedicated network, no published port) — it is not
-  reachable from nginx-proxy-manager or the internet.
+  reachable from the reverse proxy or the internet.
 - The app only sends it validated `http(s)` service URLs from the DB.
 - The container runs with `init`, `no-new-privileges`, and memory/CPU limits.
   `cap_drop: ALL` is intentionally **not** applied — Chromium needs capabilities

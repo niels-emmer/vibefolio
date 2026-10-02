@@ -25,7 +25,7 @@ import { feedbackEnabled, publicSettings } from '../public-data.js';
 
 const router = Router();
 
-// Per-IP throttle on submissions. Behind nginx-proxy-manager the real client IP depends
+// Per-IP throttle on submissions. Behind a reverse proxy the real client IP depends
 // on `trust proxy` being set to the proxy container, which src/server.js does.
 const feedbackLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,

@@ -17,8 +17,10 @@ The default branding and seed copy are deliberately neutral: set your own site t
 icon, wallpaper and copy in the admin panel (see `docs/decisions.md` D27 for the
 generalisation).
 
-Runs as a single Docker container, designed to be fronted by **nginx-proxy-manager** on the
-`proxy-net` Docker network.
+Runs as a single Docker container behind **any TLS-terminating reverse proxy of your
+choice** — nginx-proxy-manager, Caddy, Traefik, HAProxy, whatever you already run. The
+compose file attaches it to an external proxy network (default `proxy-net`, configurable
+via `PROXY_NETWORK`) and publishes no ports, so your proxy is the only way in.
 
 ## Features
 
@@ -94,19 +96,26 @@ cp .env.example .env        # set ADMIN_PASSWORD (and ALLOWED_ORIGINS if needed)
 docker compose up -d --build
 ```
 
-The compose file attaches the container to the external `proxy-net` network so
-nginx-proxy-manager can route to it. The SQLite database lives in the named Docker volume
+The compose file attaches the container to the external proxy network (the network your
+reverse proxy is on; see [`PROXY_NETWORK`](#configuration) below) so the proxy can route to
+it by container name. The SQLite database lives in the named Docker volume
 **`services-data`** (mounted at `/app/data`), which is why it survives a `docker compose down`
 and a rebuild. It is *not* in `./data` — that path is the local-development default
 (`DB_PATH`), and the deployment doc has the full picture.
 
-### nginx-proxy-manager
+### Reverse proxy
 
-1. Create a Proxy Host pointing at **`vibefolio:3000`** — the container's name on
-   `proxy-net` (the `services` in the compose file is the *service* name, which is not what
-   the proxy resolves).
-2. Set `ALLOWED_ORIGINS` in `.env` to your public origin (e.g. `https://your-domain.example`)
-   so the admin API's CSRF origin check passes for browser requests.
+1. Make sure the network your reverse proxy runs on exists and reach the app on it. The
+   compose file defaults to `proxy-net`; if yours has another name, set `PROXY_NETWORK` in
+   `.env` to it (the network must already exist — compose creates only internal ones).
+2. Create a proxy host / route forwarding to **`vibefolio:3000`** — the container's name
+   on that network (the `services` in the compose file is the *service* name, which is not
+   what the proxy resolves). Terminate TLS there.
+3. Set `ALLOWED_ORIGINS` in `.env` to your public origin (e.g. `https://your-domain.example`)
+   so the admin API's CSRF origin check passes for browser requests, and `TRUST_PROXY_IP` to
+   your proxy's IP on that network so only it can influence rate limiting.
+4. For an HTTPS proxy, also set `HSTS_ENABLED=1` in `.env` unless `NODE_ENV=production`
+   already gates HSTS on (see the note in `docs/DEVELOPMENT.md`).
 
 ## Configuration
 
@@ -123,6 +132,7 @@ All configuration is via environment variables (see `.env.example` for the annot
 | `SESSION_TTL_HOURS` | `12` | Session lifetime (hours) |
 | `LOGIN_RATE_LIMIT` | `10` | Max login attempts per IP per 15 minutes |
 | `ALLOWED_ORIGINS` | — | Comma-separated origins allowed for admin API (CSRF) |
+| `PROXY_NETWORK` | `proxy-net` | The external Docker network your reverse proxy is on (used by `docker-compose.yml` only; the network itself must already exist) |
 | `TRUST_PROXY_IP` | — | The reverse-proxy IP trusted for `X-Forwarded-For`. Set it so only that peer can influence rate limiting |
 | `BACKUP_DIR` | beside the DB | Where pre-restore snapshots are written. Inside the data volume in the container |
 | `HSTS_ENABLED` | `0` | Opt in to `Strict-Transport-Security` outside production. Only meaningful over TLS — see the note in `docs/DEVELOPMENT.md` |

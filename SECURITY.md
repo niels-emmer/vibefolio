@@ -24,8 +24,8 @@ ready.
 | Admin password / tokens | Environment / database | `ADMIN_PASSWORD` from the environment only; `.env` gitignored; a placeholder password is a boot error in production |
 
 The app assumes it runs behind a TLS-terminating reverse proxy (the compose file attaches
-to an external `proxy-net` network and publishes **no** host port). It does not implement
-TLS itself.
+to an external reverse-proxy network, default `proxy-net` configurable via `PROXY_NETWORK`,
+and publishes **no** host port). It does not implement TLS itself.
 
 ## Authentication & sessions
 

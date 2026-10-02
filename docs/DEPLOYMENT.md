@@ -51,7 +51,9 @@ ssh homeserver 'cd ~/projects/vibefolio && docker compose up -d --build'
   (`node:26-alpine`, multi-stage, non-root user).
 - `env_file: .env` plus `environment:` overrides: `NODE_ENV=production`, `PORT=3000`,
   `DB_PATH=/app/data/services.db`.
-- Attached to the external **`proxy-net`** network; **no host port published** — nginx-proxy-manager
+- Attached to the external **proxy network** (default `proxy-net` — set `PROXY_NETWORK` in
+  `.env` to the network your reverse proxy is on); **no host port published** — your
+  reverse proxy
   routes to `vibefolio:3000` by container name.
 - Hardened: `init`, `cap_drop: ALL`, `no-new-privileges`, read-only rootfs, tmpfs `/tmp`,
   `mem_limit: 256m`, `cpus: 0.5`, healthcheck on `/api/site`.

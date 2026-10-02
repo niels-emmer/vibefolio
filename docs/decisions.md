@@ -38,8 +38,8 @@ small showcase).
 
 ### D6 — Container
 **Chosen:** Multi-stage `node:24-alpine`, non-root user, healthcheck, SQLite on a volume.
-**Why:** Small image, least privilege, production health gating. Attached to the external `proxy-net`
-network for nginx-proxy-manager.
+**Why:** Small image, least privilege, production health gating. Attached to an external
+reverse-proxy network (default `proxy-net`, configurable via `PROXY_NETWORK`).
 **Source:** `Dockerfile`, `docker-compose.yml`.
 
 ### D7 — Per-service GitHub repo link
@@ -69,7 +69,7 @@ reproducible for a single-instance self-hosted app. No CI/CD needed at this scal
 **Chosen:** Applied the security review's MEDIUM findings + quick wins before showing the app to
 external reviewers:
 - **Rate limiting:** `TRUST_PROXY_IP` env restricts `trust proxy` to the reverse-proxy container
-  IP, so other containers on the shared `proxy-net` network cannot spoof `X-Forwarded-For` and
+  IP, so other containers on the shared proxy network cannot spoof `X-Forwarded-For` and
   bypass the login brute-force limiter. IPv4-mapped IPv6 peers (`::ffff:a.b.c.d`) are normalised;
   untrusted peers log a one-time warning so a stale IP is noticed.
 - **SSRF:** `isPrivateAddress` now canonicalises IPv4-mapped/compatible IPv6 forms (including
@@ -859,7 +859,8 @@ following Medium + quick wins were fixed:
   to one archive.
 
 - Invalidate existing sessions when the admin password rotates.
-- Login rate-limiter keyed on IP only (safe while the app stays unexposed on `proxy-net`).
+- Login rate-limiter keyed on IP only (safe while the app stays unexposed on the proxy
+  network).
 - Optional: move inline `style=` attributes to the stylesheet to drop `style-src 'unsafe-inline'`.
 - Add `npm audit` to CI.
 - **Pre-existing accessibility findings** (present before the fold-out menu; not introduced by

@@ -27,7 +27,7 @@ deliberately small — no build step, no framework, no ORM, no native dependenci
 ## Request flow
 
 ```
-Browser ──> nginx-proxy-manager (proxy-net) ──> vibefolio:3000
+Browser ──> your reverse proxy (proxy network) ──> vibefolio:3000
                                                   │
                                                   ├─ /             → src/routes/pages.js (server-rendered)
                                                   ├─ /credits      → src/routes/pages.js (server-rendered)
